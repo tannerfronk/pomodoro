@@ -25,12 +25,13 @@ const useStyles = makeStyles({
     alignItems: "center",
     marginBottom: 10,
   },
-  cards: {
-    maxWidth: 600,
+  cardsContainer: {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-around",
-    alignItems: "flex-start",
+  },
+  cards: {
+    border: "red",
+    maxWidth: 1000,
     paddingLeft: 10,
     paddingRight: 10,
     marginTop: 10,
@@ -38,7 +39,7 @@ const useStyles = makeStyles({
   },
 });
 
-const taskList = [];
+const taskList = []; // to store task objects in
 
 export default function Tasks() {
   const classes = useStyles();
@@ -50,7 +51,7 @@ export default function Tasks() {
     setAddOpen(true);
   };
 
-  const handleClickEditOpen = (i) => {
+  const handleClickEditOpen = (i) => { //set editId and edit state
     setEditId(i)
     setEditOpen(true);
   }
@@ -93,18 +94,16 @@ export default function Tasks() {
       id = previousId + 1;
     }
     taskList.push({id, values})
-    console.log(taskList)
   }
 
-  const handleEdit = (values) => {
-    console.log(editId)
+  const handleEdit = (values) => { //replaces objects values upon edit
     taskList[editId].values = values
   }
-  const handleDelete = (i) => {
+  const handleDelete = (i) => { //will delete selected task
     taskList.splice(i, 1)
   }
 
-  const handleClose = () => {
+  const handleClose = () => { //closes edit or add task dialogs
     setAddOpen(false);
     setEditOpen(false);
   };
@@ -223,8 +222,9 @@ export default function Tasks() {
           )}
         </Formik>
       </Dialog>
-      
+      <div className={classes.cardsContainer}>
       <RenderTasks />
+      </div>
     </div>
   );
 }
