@@ -35,58 +35,78 @@ const useStyles = makeStyles({
     paddingRight: 10,
     marginTop: 10,
     marginBottom: 10,
-    buttons: {
-      display: "flex",
-      alignItems: "flex-end",
-    }
   },
 });
 
 const taskList = [];
 
-function RenderTasks(){
-  const classes = useStyles();
-  let fullList = taskList.map((task, i) => (
-    <Card className={classes.cards}>
-      <h3>Task: {task.taskName}</h3>
-      <div className={classes.cards.buttons}>
-        <button>Edit</button>
-        <button>Delete</button>
-      </div>
-      <p>Estimated Pomodoros: {task.estPomodoros}</p>
-      <p>Project Name: {task.projectName}</p>
-      <p>Notes: {task.notes}</p>
-    </Card>
-  ))
-
-  if(taskList <= 0) {
-    return(
-      <h3>No Tasks available, add one!</h3>
-    )
-  } else{
-    return(
-      fullList
-      // <Card className={classes.cards}>
-      //   <h3>{taskList.taskName}</h3>
-      // </Card>
-    )
-  }
-}
-
 export default function Tasks() {
   const classes = useStyles();
   const [addOpen, setAddOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editId, setEditId] = useState(0)
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
   };
 
-  const handleAdd = (values) => {
-    taskList.push(values)
+  const handleClickEditOpen = (i) => {
+    setEditId(i)
+    setEditOpen(true);
   }
 
-  const handleCloseAdd = () => {
+  function RenderTasks(){ //create tasks in cards
+
+    const classes = useStyles();
+  
+    let fullList = taskList.map((task, i) => (
+      <Card key={i} className={classes.cards}>
+        <h3>Task: {task.values.taskName}</h3>
+        <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
+        <p>Project Name: {task.values.projectName}</p>
+        <p>Notes: {task.values.notes}</p>
+        <DialogActions>
+          <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
+          <Button onClick={() => handleDelete(i)}>Delete</Button>
+        </DialogActions>
+      </Card>
+    ))
+  
+    if(taskList <= 0) {
+      return(
+        <h3>No Tasks available, add one!</h3>
+      )
+    } else{
+      return(
+        fullList
+      )
+    }
+  }
+
+  const handleAdd = (values) => { //adds id to task and pushes obj to taskList
+    let previousId;
+    let id = 0;
+    if(taskList.length === 0){
+      previousId = 0;
+    } else {
+      previousId = taskList.length - 1
+      id = previousId + 1;
+    }
+    taskList.push({id, values})
+    console.log(taskList)
+  }
+
+  const handleEdit = (values) => {
+    console.log(editId)
+    taskList[editId].values = values
+  }
+  const handleDelete = (i) => {
+    taskList.splice(i, 1)
+  }
+
+  const handleClose = () => {
     setAddOpen(false);
+    setEditOpen(false);
   };
   
   return (
@@ -98,7 +118,7 @@ export default function Tasks() {
         </IconButton>
       </div>
       <Divider />
-      <Dialog open={addOpen} onClose={handleCloseAdd}>
+      <Dialog open={addOpen || editOpen} onClose={handleClose}>
         <Formik
           initialValues={{
             taskName: "Task Name",
@@ -114,8 +134,12 @@ export default function Tasks() {
           })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
               try {
-                await handleAdd(values);
-                handleCloseAdd();
+                if(addOpen === true){
+                  await handleAdd(values);
+                } else {
+                  await handleEdit(values);
+                }
+                handleClose();
               } catch (err) {
                 console.error(err);
                 setStatus({ success: false });
@@ -139,13 +163,13 @@ export default function Tasks() {
               onSubmit={handleSubmit}
               className={classes.dialogContent}
             >
-              <DialogTitle>Add Task</DialogTitle>
+              <DialogTitle>{editOpen === false ? "Add Task" : "Editing Task: " + taskList[editId].values.taskName}</DialogTitle>
               <DialogContent>
                 <TextField
                   autoFocus
                   id="taskName"
                   name="taskName"
-                  label="Task Name"
+                  label={editOpen === false ? "Task Name" : taskList[editId].values.taskName}
                   type="text"
                   fullWidth
                   value={values.name}
@@ -157,7 +181,7 @@ export default function Tasks() {
                 <TextField
                   id="estPomodoros"
                   name="estPomodoros"
-                  label="Estimate Pomodoros"
+                  label={editOpen === false ? "Estimate Pomodoros" : taskList[editId].values.estPomodoros}
                   type="number"
                   fullWidth
                   value={values.estPomodoros}
@@ -169,7 +193,7 @@ export default function Tasks() {
                 <TextField
                   id="projectName"
                   name="projectName"
-                  label="Project Name"
+                  label={editOpen === false ? "Project Name" : taskList[editId].values.projectName}
                   type="text"
                   fullWidth
                   value={values.projectName}
@@ -182,7 +206,7 @@ export default function Tasks() {
                   id="notes"
                   name="notes"
                   label="Notes"
-                  placeholder="Notes..."
+                  placeholder={editOpen === false ? "" : taskList[editId].values.projectName}
                   rowsMin={3}
                   value={values.notes}
                   onChange={handleChange}
@@ -192,8 +216,8 @@ export default function Tasks() {
                 />
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleCloseAdd}>Cancel</Button>
-                <Button type="submit">Add</Button>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button type="submit">{editOpen === false ? "Add" : "Edit"}</Button>
               </DialogActions>
             </form>
           )}
