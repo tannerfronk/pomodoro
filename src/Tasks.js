@@ -10,11 +10,13 @@ import {
   DialogContent,
   Dialog,
   TextareaAutosize,
+  Card,
 } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { makeStyles } from "@material-ui/core/styles";
+import { render } from "@testing-library/react";
 
 const useStyles = makeStyles({
   taskHeader: {
@@ -23,9 +25,53 @@ const useStyles = makeStyles({
     alignItems: "center",
     marginBottom: 10,
   },
+  cards: {
+    maxWidth: 600,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-around",
+    alignItems: "flex-start",
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginTop: 10,
+    marginBottom: 10,
+    buttons: {
+      display: "flex",
+      alignItems: "flex-end",
+    }
+  },
 });
 
 const taskList = [];
+
+function RenderTasks(){
+  const classes = useStyles();
+  let fullList = taskList.map((task, i) => (
+    <Card className={classes.cards}>
+      <h3>Task: {task.taskName}</h3>
+      <div className={classes.cards.buttons}>
+        <button>Edit</button>
+        <button>Delete</button>
+      </div>
+      <p>Estimated Pomodoros: {task.estPomodoros}</p>
+      <p>Project Name: {task.projectName}</p>
+      <p>Notes: {task.notes}</p>
+    </Card>
+  ))
+
+  if(taskList <= 0) {
+    return(
+      <h3>No Tasks available, add one!</h3>
+    )
+  } else{
+    return(
+      fullList
+      // <Card className={classes.cards}>
+      //   <h3>{taskList.taskName}</h3>
+      // </Card>
+    )
+  }
+}
 
 export default function Tasks() {
   const classes = useStyles();
@@ -37,7 +83,6 @@ export default function Tasks() {
 
   const handleAdd = (values) => {
     taskList.push(values)
-    console.log(taskList)
   }
 
   const handleCloseAdd = () => {
@@ -154,6 +199,8 @@ export default function Tasks() {
           )}
         </Formik>
       </Dialog>
+      
+      <RenderTasks />
     </div>
   );
 }
