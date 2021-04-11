@@ -25,6 +25,8 @@ const useStyles = makeStyles({
   },
 });
 
+const taskList = [];
+
 export default function Tasks() {
   const classes = useStyles();
   const [addOpen, setAddOpen] = useState(false);
@@ -32,6 +34,11 @@ export default function Tasks() {
   const handleClickAddOpen = () => {
     setAddOpen(true);
   };
+
+  const handleAdd = (values) => {
+    taskList.push(values)
+    console.log(taskList)
+  }
 
   const handleCloseAdd = () => {
     setAddOpen(false);
@@ -60,17 +67,17 @@ export default function Tasks() {
             projectName: Yup.string("Enter Project Name"),
             notes: Yup.string(""),
           })}
-          //   onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-          //     try {
-          //       await handleAdd(values);
-          //       handleCloseAdd();
-          //     } catch (err) {
-          //       console.error(err);
-          //       setStatus({ success: false });
-          //       setErrors({ submit: err.message });
-          //       setSubmitting(false);
-          //     }
-          //   }}
+            onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+              try {
+                await handleAdd(values);
+                handleCloseAdd();
+              } catch (err) {
+                console.error(err);
+                setStatus({ success: false });
+                setErrors({ submit: err.message });
+                setSubmitting(false);
+              }
+            }}
         >
           {({
             values,
