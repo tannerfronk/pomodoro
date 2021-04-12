@@ -26,7 +26,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function TheTimer() {
+export default function ShortBreak() {
   const classes = useStyles();
 
   return (
