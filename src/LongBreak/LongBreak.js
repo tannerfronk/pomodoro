@@ -26,7 +26,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function ShortBreak() {
+export default function LongBreak() {
   const classes = useStyles();
 
   return (
