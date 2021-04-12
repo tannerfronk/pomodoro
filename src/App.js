@@ -9,17 +9,12 @@ import {
   Typography,
   Button,
   IconButton,
-  CircularProgress,
   Drawer,
   CssBaseline,
   List,
   Divider,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
-import SkipNextIcon from "@material-ui/icons/SkipNext";
-import ReplayIcon from "@material-ui/icons/Replay";
-import PauseIcon from "@material-ui/icons/Pause";
-import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
@@ -29,6 +24,7 @@ import TimerIcon from "@material-ui/icons/Timer";
 import AssessmentIcon from "@material-ui/icons/Assessment";
 import SettingsIcon from "@material-ui/icons/Settings";
 import PersonIcon from '@material-ui/icons/Person';
+import TheTimer from './Timer/Timer'
 
 const drawerWidth = 240;
 
@@ -105,20 +101,7 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
   const theme = useTheme();
-  const [progress, setProgress] = React.useState(0);
   const [open, setOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prevProgress) =>
-        prevProgress >= 100 ? 0 : prevProgress + 10
-      );
-    }, 1000);
-
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -209,27 +192,7 @@ export default function App() {
           <Button>Short Break</Button>
           <Button>Long Break</Button>
         </div>
-        <div className={classes.timer}>
-          <CircularProgress
-            variant="determinate"
-            value={progress}
-          />
-          <h3>25:00</h3>
-          <div>
-            <IconButton>
-              <ReplayIcon />
-            </IconButton>
-            <IconButton>
-              <PauseIcon />
-            </IconButton>
-            <IconButton>
-              <PlayArrowIcon />
-            </IconButton>
-            <IconButton>
-              <SkipNextIcon />
-            </IconButton>
-          </div>
-        </div>
+        <TheTimer />
         <Tasks />
       </main>
     </div>
