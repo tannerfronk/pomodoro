@@ -26,12 +26,12 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function TheTimer() {
+export default function ShortBreak() {
   const classes = useStyles();
 
   return (
     <Timer
-      initialTime={1500000}
+      initialTime={300000}
       startImmediately={false}
       direction="backward"
       onStart={() => console.log("onStart hook")}
