@@ -46,6 +46,7 @@ export default function Tasks() {
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editId, setEditId] = useState(0)
+  const [confirm, setConfirm] = useState(false)
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
@@ -100,12 +101,18 @@ export default function Tasks() {
     taskList[editId].values = values
   }
   const handleDelete = (i) => { //will delete selected task
-    taskList.splice(i, 1)
+    setEditId(i)
+    setConfirm(true)
+  }
+  const confirmDelete = () => {
+    taskList.splice(editId, 1)
+    setConfirm(false)
   }
 
   const handleClose = () => { //closes edit or add task dialogs
     setAddOpen(false);
     setEditOpen(false);
+    setConfirm(false)
   };
   
   return (
@@ -225,6 +232,13 @@ export default function Tasks() {
       <div className={classes.cardsContainer}>
       <RenderTasks />
       </div>
+      <Dialog open={confirm} onClose={handleClose}>
+        <DialogTitle>Are you sure you want to delete {confirm === false ? "" : taskList[editId].values.taskName}?</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={confirmDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
