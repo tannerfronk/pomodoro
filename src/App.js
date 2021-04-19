@@ -228,7 +228,7 @@ export default function App() {
           <Button>Short Break</Button>
           <Button>Long Break</Button>
         </div>
-        <TheTimer pomoTimeData = {pomodoroTime}/>
+        <TheTimer pomoTimeData = {pomodoroTime} shortBreakData = {shortBreak} longBreakData = {longBreak}/>
         <Tasks />
         <Dialog open={settingsOpen} onClose={handleClickSettingsClose}>
           <Formik

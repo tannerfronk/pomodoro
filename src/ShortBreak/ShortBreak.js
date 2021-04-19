@@ -26,12 +26,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function ShortBreak() {
+export default function ShortBreak({shortBreakData, save}) {
   const classes = useStyles();
 
+  const shortBreak = shortBreakData*60*1000
+
   return (
+    <div key={save}>
     <Timer
-      initialTime={300000}
+      initialTime={shortBreak}
       startImmediately={false}
       direction="backward"
       onStart={() => console.log("onStart hook")}
@@ -64,5 +67,6 @@ export default function ShortBreak() {
         </React.Fragment>
       )}
     </Timer>
+    </div>
   );
 }

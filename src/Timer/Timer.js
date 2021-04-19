@@ -29,18 +29,15 @@ const useStyles = makeStyles(() => ({
 export default function TheTimer({pomoTimeData}) {
   const classes = useStyles();
 
-  // const timer = 1500000
-
   const pomoTime = pomoTimeData*60*1000
 
-  console.log(pomoTime)
-
-
   return (
+    <div key={pomoTimeData}>
     <Timer
       initialTime={pomoTime}
       startImmediately={false}
       direction="backward"
+      timeToUpdate='10' 
       onStart={() => console.log("onStart hook")}
       onResume={() => console.log("onResume hook")}
       onPause={() => console.log("onPause hook")}
@@ -71,5 +68,6 @@ export default function TheTimer({pomoTimeData}) {
         </React.Fragment>
       )}
     </Timer>
+    </div>
   );
 }

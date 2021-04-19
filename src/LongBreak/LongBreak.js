@@ -26,12 +26,15 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function LongBreak() {
+export default function LongBreak({longBreakData, save}) {
   const classes = useStyles();
 
+  const longBreak = longBreakData*60*1000
+
   return (
+    <div key={save}>
     <Timer
-      initialTime={1200000}
+      initialTime={longBreak}
       startImmediately={false}
       direction="backward"
       onStart={() => console.log("onStart hook")}
@@ -64,5 +67,6 @@ export default function LongBreak() {
         </React.Fragment>
       )}
     </Timer>
+    </div>
   );
 }
