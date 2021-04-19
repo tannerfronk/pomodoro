@@ -46,6 +46,7 @@ export default function Tasks() {
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editId, setEditId] = useState(0)
+  const [confirm, setConfirm] = useState(false)
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
@@ -100,12 +101,18 @@ export default function Tasks() {
     taskList[editId].values = values
   }
   const handleDelete = (i) => { //will delete selected task
-    taskList.splice(i, 1)
+    setEditId(i)
+    setConfirm(true)
+  }
+  const confirmDelete = () => {
+    taskList.splice(editId, 1)
+    setConfirm(false)
   }
 
   const handleClose = () => { //closes edit or add task dialogs
     setAddOpen(false);
     setEditOpen(false);
+    setConfirm(false)
   };
   
   return (
@@ -120,10 +127,12 @@ export default function Tasks() {
       <Dialog open={addOpen || editOpen} onClose={handleClose}>
         <Formik
           initialValues={{
-            taskName: "",
-            estPomodoros: "",
-            projectName: "",
-            notes: "",
+ settings
+            taskName: "Task Name",
+            estPomodoros: 5,
+            projectName: "New Project",
+            notes: "Notes...",
+
           }}
           validationSchema={Yup.object().shape({
             taskName: Yup.string("Enter task name.").required("Name is required"),
@@ -172,6 +181,7 @@ export default function Tasks() {
                   id="taskName"
                   name="taskName"
                   label={editOpen === false ? "Task Name" : taskList[editId].values.taskName}
+                  defaultValue={editOpen === false ? "" : taskList[editId].values.taskName}
                   type="text"
                   fullWidth
                   value={values.name}
@@ -183,10 +193,10 @@ export default function Tasks() {
                 <TextField
                   id="estPomodoros"
                   name="estPomodoros"
-                  label={editOpen === false ? "Estimate Pomodoros" : taskList[editId].values.estPomodoros}
+                  label="Estimated Pomodoros"
                   type="number"
                   fullWidth
-                  value={values.estPomodoros}
+                  defaultValue={editOpen === false ? values.estPomodoros : parseInt(taskList[editId].values.estPomodoros)}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={Boolean(touched.estPomodoros && errors.estPomodoros)}
@@ -195,10 +205,10 @@ export default function Tasks() {
                 <TextField
                   id="projectName"
                   name="projectName"
-                  label={editOpen === false ? "Project Name" : taskList[editId].values.projectName}
+                  label="Project Name"
                   type="text"
                   fullWidth
-                  value={values.projectName}
+                  defaultValue={editOpen === false ? "New Project" : taskList[editId].values.projectName}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={Boolean(touched.projectName && errors.projectName)}
@@ -208,9 +218,8 @@ export default function Tasks() {
                   id="notes"
                   name="notes"
                   label="Notes"
-                  placeholder={editOpen === false ? "" : taskList[editId].values.projectName}
                   rowsMin={3}
-                  value={values.notes}
+                  defaultValue={editOpen === false ? "Notes..." : taskList[editId].values.notes}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={Boolean(touched.notes && errors.notes)}
@@ -228,6 +237,13 @@ export default function Tasks() {
       <div className={classes.cardsContainer}>
       <RenderTasks />
       </div>
+      <Dialog open={confirm} onClose={handleClose}>
+        <DialogTitle>Are you sure you want to delete {confirm === false ? "" : taskList[editId].values.taskName}?</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={confirmDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
