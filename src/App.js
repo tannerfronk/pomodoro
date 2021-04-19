@@ -111,10 +111,9 @@ export default function App() {
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
-  const [pomodoroTime, setPomodoroTime] = useState(25)
-  const [shortBreak, setShortBreak] = useState(5)
-  const [longBreak, setLongBreak] = useState(15)
-
+  const [pomodoroTime, setPomodoroTime] = useState(25);
+  const [shortBreak, setShortBreak] = useState(5);
+  const [longBreak, setLongBreak] = useState(15);
 
   const handleClickSettingsOpen = () => {
     setSettingsOpen(true);
@@ -141,11 +140,11 @@ export default function App() {
   };
 
   const handleSave = (values) => {
-    setPomodoroTime(values.pomoTime)
-    setShortBreak(values.shortBreak)
-    setLongBreak(values.longBreak)
-    console.log(values.pomoTime, values.shortBreak, values.longBreak)
-  }
+    setPomodoroTime(values.pomoTime);
+    setShortBreak(values.shortBreak);
+    setLongBreak(values.longBreak);
+    console.log(values.pomoTime, values.shortBreak, values.longBreak);
+  };
 
   return (
     <div className={classes.root}>
@@ -228,7 +227,11 @@ export default function App() {
           <Button>Short Break</Button>
           <Button>Long Break</Button>
         </div>
-        <TheTimer pomoTimeData = {pomodoroTime} shortBreakData = {shortBreak} longBreakData = {longBreak}/>
+        <TheTimer
+          pomoTimeData={pomodoroTime}
+          shortBreakData={shortBreak}
+          longBreakData={longBreak}
+        />
         <Tasks />
         <Dialog open={settingsOpen} onClose={handleClickSettingsClose}>
           <Formik
@@ -236,6 +239,8 @@ export default function App() {
               pomoTime: pomodoroTime,
               shortBreak: shortBreak,
               longBreak: longBreak,
+              alarmVolume: 50,
+              tickingVolume: 50,
             }}
             validationSchema={Yup.object().shape({
               pomoTime: Yup.number("Please Enter a Number")
@@ -250,19 +255,31 @@ export default function App() {
                 .typeError("Please Enter a Number")
                 .required("Required")
                 .min(1, "Must be more than 0"),
+              alarmVolume: Yup.number("Please Enter a Number")
+                .typeError("Please Enter a Number")
+                .required("Required")
+                .min(1, "Must be more than 0")
+                .max(100, "Cannot be more than 100"),
+              tickingVolume: Yup.number("Please Enter a Number")
+                .typeError("Please Enter a Number")
+                .required("Required")
+                .min(1, "Must be more than 0")
+                .max(100, "Cannot be more than 100"),
             })}
-            onSubmit={async (values, { setErrors, setstatus, setSubmitting }) => {
+            onSubmit={async (
+              values,
+              { setErrors, setstatus, setSubmitting }
+            ) => {
               try {
-                if(settingsOpen === true) {
+                if (settingsOpen === true) {
                   await handleSave(values);
-                } 
-                handleClickSettingsClose()
-              }
-              catch (err) {
-                console.log(err)
+                }
+                handleClickSettingsClose();
+              } catch (err) {
+                console.log(err);
                 setstatus({ success: false });
-                setErrors({ submit: err.message});
-                setSubmitting(false)
+                setErrors({ submit: err.message });
+                setSubmitting(false);
               }
             }}
           >
@@ -283,6 +300,7 @@ export default function App() {
               >
                 <DialogTitle>Settings</DialogTitle>
                 <DialogContent>
+                  <h3>Time</h3>
                   <TextField
                     id="pomoTime"
                     name="pomoTime"
@@ -316,12 +334,36 @@ export default function App() {
                     error={Boolean(touched.longBreak && errors.longBreak)}
                     helperText={touched.longBreak && errors.longBreak}
                   />
+                  <h3>Volume</h3>
+
+                  <TextField
+                    id="alarmVolume"
+                    name="alarmVolume"
+                    label="Alarm Volume"
+                    type="number"
+                    value={values.alarmVolume}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={Boolean(touched.alarmVolume && errors.alarmVolume)}
+                    helperText={touched.alarmVolume && errors.alarmVolume}
+                  />
+                  <TextField
+                    id="tickingVolume"
+                    name="tickingVolume"
+                    label="Ticking Volume"
+                    type="number"
+                    value={values.tickingVolume}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={Boolean(
+                      touched.tickingVolume && errors.tickingVolume
+                    )}
+                    helperText={touched.tickingVolume && errors.tickingVolume}
+                  />
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClickSettingsClose}>Cancel</Button>
-                  <Button type="submit" >
-                    Save
-                  </Button>
+                  <Button type="submit">Save</Button>
                 </DialogActions>
               </form>
             )}
