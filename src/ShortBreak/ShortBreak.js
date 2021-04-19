@@ -1,10 +1,11 @@
 import React from "react";
 import Timer from "react-compound-timer";
 import { makeStyles } from "@material-ui/core/styles";
-import { IconButton, Card } from "@material-ui/core";
+import { IconButton, Card, Button } from "@material-ui/core";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import ReplayIcon from "@material-ui/icons/Replay";
+import SkipNextIcon from "@material-ui/icons/SkipNext";
 
 const useStyles = makeStyles(() => ({
   main: {
@@ -26,47 +27,64 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function ShortBreak({shortBreakData, save}) {
+export default function ShortBreak({
+  shortBreakData,
+  save,
+  onFinish,
+  finished,
+}) {
   const classes = useStyles();
 
-  const shortBreak = shortBreakData*60*1000
+  const shortBreak = shortBreakData;
 
   return (
     <div key={save}>
-    <Timer
-      initialTime={shortBreak}
-      startImmediately={false}
-      direction="backward"
-      onStart={() => console.log("onStart hook")}
-      onResume={() => console.log("onResume hook")}
-      onPause={() => console.log("onPause hook")}
-      onReset={() => console.log("onReset hook")}
-    >
-      {({ start, pause, reset }) => (
-        <React.Fragment>
-          {" "}
-          <div className={classes.main}>
-            <Card className={classes.card} variant="outlined">
-              <div className={classes.time}>
-                <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
-              </div>
-              <div>
-                {" "}
-                <IconButton variant="contained" onClick={reset}>
-                  <ReplayIcon />
-                </IconButton>
-                <IconButton variant="contained" onClick={start}>
-                  <PlayArrowIcon />
-                </IconButton>
-                <IconButton variant="contained" onClick={pause}>
-                  <PauseIcon />
-                </IconButton>
-              </div>
-            </Card>
-          </div>
-        </React.Fragment>
-      )}
-    </Timer>
+      <Timer
+        initialTime={shortBreak}
+        startImmediately={false}
+        direction="backward"
+        onStart={() => console.log("onStart hook")}
+        onResume={() => console.log("onResume hook")}
+        onPause={() => console.log("onPause hook")}
+        onReset={() => console.log("onReset hook")}
+        checkpoints={[
+          {
+            time: 0,
+            callback: () => onFinish(),
+          },
+        ]}
+      >
+        {({ start, pause, reset }) => (
+          <React.Fragment>
+            {" "}
+            <div className={classes.main}>
+              <Card className={classes.card} variant="outlined">
+                <div>
+                  <Button>Short Break</Button>
+                </div>
+                <div className={classes.time}>
+                  <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
+                </div>
+                <div>
+                  {" "}
+                  <IconButton variant="contained" onClick={reset}>
+                    <ReplayIcon />
+                  </IconButton>
+                  <IconButton variant="contained" onClick={start}>
+                    <PlayArrowIcon />
+                  </IconButton>
+                  <IconButton variant="contained" onClick={pause}>
+                    <PauseIcon />
+                  </IconButton>
+                  <IconButton variant="contained" onClick={onFinish}>
+                    <SkipNextIcon />
+                  </IconButton>
+                </div>
+              </Card>
+            </div>
+          </React.Fragment>
+        )}
+      </Timer>
     </div>
   );
 }
