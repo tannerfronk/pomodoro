@@ -127,7 +127,6 @@ export default function Tasks() {
       <Dialog open={addOpen || editOpen} onClose={handleClose}>
         <Formik
           initialValues={{
- settings
             taskName: "Task Name",
             estPomodoros: 5,
             projectName: "New Project",

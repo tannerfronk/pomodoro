@@ -26,12 +26,19 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function TheTimer() {
+export default function TheTimer({pomoTimeData}) {
   const classes = useStyles();
+
+  // const timer = 1500000
+
+  const pomoTime = pomoTimeData*60*1000
+
+  console.log(pomoTime)
+
 
   return (
     <Timer
-      initialTime={1500000}
+      initialTime={pomoTime}
       startImmediately={false}
       direction="backward"
       onStart={() => console.log("onStart hook")}

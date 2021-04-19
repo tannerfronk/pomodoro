@@ -111,6 +111,10 @@ export default function App() {
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
+  const [pomodoroTime, setPomodoroTime] = useState(25)
+  const [shortBreak, setShortBreak] = useState(5)
+  const [longBreak, setLongBreak] = useState(15)
+
 
   const handleClickSettingsOpen = () => {
     setSettingsOpen(true);
@@ -135,6 +139,13 @@ export default function App() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const handleSave = (values) => {
+    setPomodoroTime(values.pomoTime)
+    setShortBreak(values.shortBreak)
+    setLongBreak(values.longBreak)
+    console.log(values.pomoTime, values.shortBreak, values.longBreak)
+  }
 
   return (
     <div className={classes.root}>
@@ -217,14 +228,14 @@ export default function App() {
           <Button>Short Break</Button>
           <Button>Long Break</Button>
         </div>
-        <TheTimer />
+        <TheTimer pomoTimeData = {pomodoroTime}/>
         <Tasks />
         <Dialog open={settingsOpen} onClose={handleClickSettingsClose}>
           <Formik
             initialValues={{
-              pomoTime: "",
-              shortBreak: "",
-              longBreak: "",
+              pomoTime: pomodoroTime,
+              shortBreak: shortBreak,
+              longBreak: longBreak,
             }}
             validationSchema={Yup.object().shape({
               pomoTime: Yup.number("Please Enter a Number")
@@ -240,6 +251,20 @@ export default function App() {
                 .required("Required")
                 .min(1, "Must be more than 0"),
             })}
+            onSubmit={async (values, { setErrors, setstatus, setSubmitting }) => {
+              try {
+                if(settingsOpen === true) {
+                  await handleSave(values);
+                } 
+                handleClickSettingsClose()
+              }
+              catch (err) {
+                console.log(err)
+                setstatus({ success: false });
+                setErrors({ submit: err.message});
+                setSubmitting(false)
+              }
+            }}
           >
             {({
               values,
@@ -253,6 +278,7 @@ export default function App() {
               <form
                 noValidate
                 autoComplete="off"
+                onSubmit={handleSubmit}
                 className={classes.dialogContent}
               >
                 <DialogTitle>Settings</DialogTitle>
@@ -293,7 +319,7 @@ export default function App() {
                 </DialogContent>
                 <DialogActions>
                   <Button onClick={handleClickSettingsClose}>Cancel</Button>
-                  <Button type="submit" onClick={handleClickSettingsClose}>
+                  <Button type="submit" >
                     Save
                   </Button>
                 </DialogActions>
