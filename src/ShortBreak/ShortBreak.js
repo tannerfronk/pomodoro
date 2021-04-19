@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
 export default function ShortBreak({shortBreakData, save}) {
   const classes = useStyles();
 
-  const shortBreak = shortBreakData*60*1000
+  const shortBreak = shortBreakData
 
   return (
     <div key={save}>
