@@ -16,7 +16,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { makeStyles } from "@material-ui/core/styles";
-import { render } from "@testing-library/react";
+// import { render } from "@testing-library/react";
 
 const useStyles = makeStyles({
   taskHeader: {
@@ -127,14 +127,19 @@ export default function Tasks() {
       <Dialog open={addOpen || editOpen} onClose={handleClose}>
         <Formik
           initialValues={{
+ settings
             taskName: "Task Name",
             estPomodoros: 5,
             projectName: "New Project",
             notes: "Notes...",
+
           }}
           validationSchema={Yup.object().shape({
             taskName: Yup.string("Enter task name.").required("Name is required"),
-            estPomodoros: Yup.number("Pomodoros"),
+            estPomodoros: Yup.number("Please Enter a Number")
+            .typeError("Please Enter a Number")
+            .required("Required")
+            .min(1, "Must be more than 0"),
             projectName: Yup.string("Enter Project Name"),
             notes: Yup.string(""),
           })}
