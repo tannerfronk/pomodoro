@@ -50,7 +50,7 @@ export default function ShortBreak({
         checkpoints={[
           {
             time: 0,
-            callback: () => onFinish,
+            callback: () => onFinish(),
           },
         ]}
       >

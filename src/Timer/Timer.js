@@ -7,6 +7,7 @@ import PauseIcon from "@material-ui/icons/Pause";
 import ReplayIcon from "@material-ui/icons/Replay";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import ShortBreak from "../ShortBreak/ShortBreak";
+import LongBreak from "../LongBreak/LongBreak"
 
 const useStyles = makeStyles(() => ({
   main: {
@@ -28,16 +29,20 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function TheTimer({ pomoTimeData, shortBreakData }) {
+export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }) {
   const classes = useStyles();
   const [finished, setFinished] = useState(0);
   const pomoTime = pomoTimeData * 60 * 1000;
   const shortBreak = shortBreakData * 60 * 1000;
+  const longBreak = longBreakData * 60 * 1000;
 
   const handleFinish = () => {
-    console.log(finished);
     setFinished(finished + 1);
   };
+
+  const handleRestart = () => {
+    setFinished(0)
+  }
 
   if (finished === 0) {
     return (
@@ -275,6 +280,16 @@ export default function TheTimer({ pomoTimeData, shortBreakData }) {
             </React.Fragment>
           )}
         </Timer>
+      </div>
+    );
+  } else if (finished === 7) {
+    return (
+      <div key={pomoTimeData}>
+        <LongBreak
+          onFinish={handleRestart}
+          finished={finished}
+          longBreakData={longBreak}
+        />
       </div>
     );
   }
