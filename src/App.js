@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState } from "react";
 import "./App.css";
 import Tasks from "./Tasks";
 import clsx from "clsx";
@@ -13,6 +13,11 @@ import {
   CssBaseline,
   List,
   Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -23,8 +28,10 @@ import ListItemText from "@material-ui/core/ListItemText";
 import TimerIcon from "@material-ui/icons/Timer";
 import AssessmentIcon from "@material-ui/icons/Assessment";
 import SettingsIcon from "@material-ui/icons/Settings";
-import PersonIcon from '@material-ui/icons/Person';
-import TheTimer from './Timer/Timer'
+import PersonIcon from "@material-ui/icons/Person";
+import TheTimer from "./Timer/Timer";
+import { Formik } from "formik";
+import * as Yup from "yup";
 
 const drawerWidth = 240;
 
@@ -101,7 +108,25 @@ const useStyles = makeStyles((theme) => ({
 export default function App() {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+
+  const handleClickSettingsOpen = () => {
+    setSettingsOpen(true);
+  };
+
+  const handleClickSettingsClose = () => {
+    setSettingsOpen(false);
+  };
+
+  const handleClickLoginOpen = () => {
+    setLoginOpen(true);
+  };
+
+  const handleClickLoginClose = () => {
+    setLoginOpen(false);
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -167,13 +192,13 @@ export default function App() {
             </ListItemIcon>
             <ListItemText>Report</ListItemText>
           </ListItem>
-          <ListItem button>
+          <ListItem button onClick={() => handleClickSettingsOpen()}>
             <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>
             <ListItemText>Settings</ListItemText>
           </ListItem>
-          <ListItem button>
+          <ListItem button onClick={() => handleClickLoginOpen()}>
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
@@ -194,6 +219,162 @@ export default function App() {
         </div>
         <TheTimer />
         <Tasks />
+        <Dialog open={settingsOpen} onClose={handleClickSettingsClose}>
+          <Formik
+            initialValues={{
+              pomoTime: "",
+              shortBreak: "",
+              longBreak: "",
+            }}
+            validationSchema={Yup.object().shape({
+              pomoTime: Yup.number("Please Enter a Number")
+                .typeError("Please Enter a Number")
+                .required("Required")
+                .min(1, "Must be more than 0"),
+              shortBreak: Yup.number("Please Enter a Number")
+                .typeError("Please Enter a Number")
+                .required("Required")
+                .min(1, "Must be more than 0"),
+              longBreak: Yup.number("Please Enter a Number")
+                .typeError("Please Enter a Number")
+                .required("Required")
+                .min(1, "Must be more than 0"),
+            })}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+            }) => (
+              <form
+                noValidate
+                autoComplete="off"
+                className={classes.dialogContent}
+              >
+                <DialogTitle>Settings</DialogTitle>
+                <DialogContent>
+                  <TextField
+                    id="pomoTime"
+                    name="pomoTime"
+                    label="Pomodoro Time"
+                    type="number"
+                    value={values.pomoTime}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={Boolean(touched.pomoTime && errors.pomoTime)}
+                    helperText={touched.pomoTime && errors.pomoTime}
+                  />
+                  <TextField
+                    id="shortBreak"
+                    name="shortBreak"
+                    label="Short Break"
+                    type="number"
+                    value={values.shortBreak}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={Boolean(touched.shortBreak && errors.shortBreak)}
+                    helperText={touched.shortBreak && errors.shortBreak}
+                  />
+                  <TextField
+                    id="longBreak"
+                    name="longBreak"
+                    label="Long Break"
+                    type="number"
+                    value={values.longBreak}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={Boolean(touched.longBreak && errors.longBreak)}
+                    helperText={touched.longBreak && errors.longBreak}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleClickSettingsClose}>Cancel</Button>
+                  <Button type="submit" onClick={handleClickSettingsClose}>
+                    Save
+                  </Button>
+                </DialogActions>
+              </form>
+            )}
+          </Formik>
+        </Dialog>
+
+        <Dialog open={loginOpen}>
+          <DialogTitle>Log In</DialogTitle>
+          <DialogContent>
+            <Formik
+              initialValues={{
+                email: "",
+                password: "",
+                submit: null,
+              }}
+              validationSchema={Yup.object().shape({
+                email: Yup.string().email().max(50).required(),
+                password: Yup.string().min(8).max(50).required(),
+              })}
+            >
+              {({
+                values,
+                errors,
+                touched,
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                isSubmitting,
+              }) => (
+                <form noValidate onSubmit={handleSubmit} autoComplete="off">
+                  <TextField
+                    autoFocus
+                    required
+                    fullWidth
+                    margin="normal"
+                    label="Email Address"
+                    type="email"
+                    name="email"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.email}
+                    error={Boolean(touched.email && errors.email)}
+                    helperText={touched.email && errors.email}
+                  />
+                  <TextField
+                    required
+                    fullWidth
+                    margin="normal"
+                    label="Password"
+                    type="password"
+                    name="password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
+                    error={Boolean(touched.password && errors.password)}
+                    helperText={touched.password && errors.password}
+                  />
+                  <DialogActions>
+                    <Button
+                      onClick={handleClickLoginClose}
+                      variant="contained"
+                      color="primary"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      type="submit"
+                      disabled={Boolean(errors.email || errors.password)}
+                    >
+                      Signup
+                    </Button>
+                  </DialogActions>
+                </form>
+              )}
+            </Formik>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );
