@@ -31,7 +31,6 @@ const useStyles = makeStyles({
   },
   cards: {
     border: "red",
-    maxWidth: 1000,
     paddingLeft: 10,
     paddingRight: 10,
     marginTop: 10,
@@ -40,6 +39,7 @@ const useStyles = makeStyles({
 });
 
 const taskList = []; // to store task objects in
+const completedTasks = [] // to store completed tasks separately
 
 export default function Tasks() {
   const classes = useStyles();
@@ -47,6 +47,7 @@ export default function Tasks() {
   const [editOpen, setEditOpen] = useState(false);
   const [editId, setEditId] = useState(0)
   const [confirm, setConfirm] = useState(false)
+  const [complete, setComplete] = useState(false)
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
@@ -61,26 +62,47 @@ export default function Tasks() {
 
     const classes = useStyles();
   
-    let fullList = taskList.map((task, i) => (
+    let incompleteList = taskList.map((task, i) => (
       <Card key={i} className={classes.cards}>
         <h3>Task: {task.values.taskName}</h3>
         <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
+        <p>Actual Pomodoros: {task.values.actPomodoros == 0 ? 'N/A' : task.values.actPomodoros}</p>
         <p>Project Name: {task.values.projectName}</p>
         <p>Notes: {task.values.notes}</p>
         <DialogActions>
           <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
           <Button onClick={() => handleDelete(i)}>Delete</Button>
+          <Button onClick={() => handleComplete(i)}>Complete</Button>
         </DialogActions>
       </Card>
     ))
+    
+    let completeList = completedTasks.map((task, i) => (
+      <Card key={i} className={classes.cards}>
+        <h3>Task: {task.values.taskName}</h3>
+        <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
+        <p>Actual Pomodoros: {task.values.actPomodoros == 0 ? 'N/A' : task.values.actPomodoros}</p>
+        <p>Project Name: {task.values.projectName}</p>
+        <p>Notes: {task.values.notes}</p>
+      </Card>
+    ))
   
-    if(taskList <= 0) {
+    if(taskList <= 0 && completedTasks <= 0) {
       return(
         <h3>No Tasks available, add one!</h3>
       )
     } else{
       return(
-        fullList
+        <div>
+        <div>
+        <h2>In Progress Tasks:</h2>
+        {incompleteList}
+        </div>
+        <div>
+        <h2>Completed Tasks:</h2>
+        {completeList}
+        </div>
+        </div>
       )
     }
   }
@@ -104,6 +126,18 @@ export default function Tasks() {
     setEditId(i)
     setConfirm(true)
   }
+  const handleComplete = (i) => {//grabs id for current task
+    setEditId(i)
+    setComplete(true)
+  }
+  const completeTask = () => {//will mark task as complete
+    let actPomodoros = document.getElementById('actPomodoros').value
+    taskList[editId].values.actPomodoros = actPomodoros
+    taskList[editId].values.complete = true
+    setComplete(false)
+    completedTasks.push(taskList[editId])
+    taskList.splice(editId, 1)
+  }
   const confirmDelete = () => {
     taskList.splice(editId, 1)
     setConfirm(false)
@@ -112,7 +146,8 @@ export default function Tasks() {
   const handleClose = () => { //closes edit or add task dialogs
     setAddOpen(false);
     setEditOpen(false);
-    setConfirm(false)
+    setConfirm(false);
+    setComplete(false);
   };
   
   return (
@@ -131,7 +166,8 @@ export default function Tasks() {
             estPomodoros: 5,
             projectName: "New Project",
             notes: "Notes...",
-
+            complete: false,
+            actPomodoros: ""
           }}
           validationSchema={Yup.object().shape({
             taskName: Yup.string("Enter task name.").required("Name is required"),
@@ -141,6 +177,7 @@ export default function Tasks() {
             .min(1, "Must be more than 0"),
             projectName: Yup.string("Enter Project Name"),
             notes: Yup.string(""),
+            actPomodoros: Yup.number("Pomodoros")
           })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
               try {
@@ -241,6 +278,23 @@ export default function Tasks() {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={confirmDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={complete} onClose={handleClose}>
+        <DialogTitle>How many Pomodoros did it take to complete {complete === false ? "" : taskList[editId].values.projectName}?</DialogTitle>
+        <DialogContent>
+        <TextField
+                  id="actPomodoros"
+                  name="actPomodoros"
+                  label="Actual Pomodoros"
+                  type="number"
+                  defaultValue={complete === false ? "Actual Pomodoros" : taskList[editId].values.estPomodoros}
+                  fullWidth
+                />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={completeTask}>Complete</Button>
         </DialogActions>
       </Dialog>
     </div>
