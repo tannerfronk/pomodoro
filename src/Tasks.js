@@ -47,6 +47,7 @@ export default function Tasks() {
   const [editOpen, setEditOpen] = useState(false);
   const [editId, setEditId] = useState(0)
   const [confirm, setConfirm] = useState(false)
+  const [complete, setComplete] = useState(false)
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
@@ -65,11 +66,13 @@ export default function Tasks() {
       <Card key={i} className={classes.cards}>
         <h3>Task: {task.values.taskName}</h3>
         <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
+        <p>Actual Pomodoros: {task.values.actPomodoros == 0 ? 'N/A' : task.values.actPomodoros}</p>
         <p>Project Name: {task.values.projectName}</p>
         <p>Notes: {task.values.notes}</p>
         <DialogActions>
           <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
           <Button onClick={() => handleDelete(i)}>Delete</Button>
+          <Button onClick={() => handleComplete(i)}>Complete</Button>
         </DialogActions>
       </Card>
     ))
@@ -104,6 +107,16 @@ export default function Tasks() {
     setEditId(i)
     setConfirm(true)
   }
+  const handleComplete = (i) => {//grabs id for current task
+    setEditId(i)
+    setComplete(true)
+  }
+  const completeTask = () => {//will mark task as complete
+    let actPomodoros = document.getElementById('actPomodoros').value
+    taskList[editId].values.actPomodoros = actPomodoros
+    taskList[editId].values.complete = true
+    setComplete(false)
+  }
   const confirmDelete = () => {
     taskList.splice(editId, 1)
     setConfirm(false)
@@ -112,7 +125,8 @@ export default function Tasks() {
   const handleClose = () => { //closes edit or add task dialogs
     setAddOpen(false);
     setEditOpen(false);
-    setConfirm(false)
+    setConfirm(false);
+    setComplete(false);
   };
   
   return (
@@ -131,12 +145,15 @@ export default function Tasks() {
             estPomodoros: 5,
             projectName: "New Project",
             notes: "Notes...",
+            complete: false,
+            actPomodoros: ""
           }}
           validationSchema={Yup.object().shape({
             taskName: Yup.string("Enter task name.").required("Name is required"),
             estPomodoros: Yup.number("Pomodoros"),
             projectName: Yup.string("Enter Project Name"),
             notes: Yup.string(""),
+            actPomodoros: Yup.number("Pomodoros")
           })}
             onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
               try {
@@ -237,6 +254,22 @@ export default function Tasks() {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={confirmDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={complete} onClose={handleClose}>
+        <DialogTitle>How many Pomodoros did it take to complete ?</DialogTitle>
+        <DialogContent>
+        <TextField
+                  id="actPomodoros"
+                  name="actPomodoros"
+                  label="Actual Pomodoros"
+                  type="number"
+                  fullWidth
+                />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={completeTask}>Complete</Button>
         </DialogActions>
       </Dialog>
     </div>
