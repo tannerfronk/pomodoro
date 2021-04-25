@@ -31,7 +31,6 @@ const useStyles = makeStyles({
   },
   cards: {
     border: "red",
-    maxWidth: 1000,
     paddingLeft: 10,
     paddingRight: 10,
     marginTop: 10,
@@ -40,6 +39,7 @@ const useStyles = makeStyles({
 });
 
 const taskList = []; // to store task objects in
+const completedTasks = [] // to store completed tasks separately
 
 export default function Tasks() {
   const classes = useStyles();
@@ -62,7 +62,7 @@ export default function Tasks() {
 
     const classes = useStyles();
   
-    let fullList = taskList.map((task, i) => (
+    let incompleteList = taskList.map((task, i) => (
       <Card key={i} className={classes.cards}>
         <h3>Task: {task.values.taskName}</h3>
         <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
@@ -76,14 +76,33 @@ export default function Tasks() {
         </DialogActions>
       </Card>
     ))
+    
+    let completeList = completedTasks.map((task, i) => (
+      <Card key={i} className={classes.cards}>
+        <h3>Task: {task.values.taskName}</h3>
+        <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
+        <p>Actual Pomodoros: {task.values.actPomodoros == 0 ? 'N/A' : task.values.actPomodoros}</p>
+        <p>Project Name: {task.values.projectName}</p>
+        <p>Notes: {task.values.notes}</p>
+      </Card>
+    ))
   
-    if(taskList <= 0) {
+    if(taskList <= 0 && completedTasks <= 0) {
       return(
         <h3>No Tasks available, add one!</h3>
       )
     } else{
       return(
-        fullList
+        <div>
+        <div>
+        <h2>In Progress Tasks:</h2>
+        {incompleteList}
+        </div>
+        <div>
+        <h2>Completed Tasks:</h2>
+        {completeList}
+        </div>
+        </div>
       )
     }
   }
@@ -116,6 +135,8 @@ export default function Tasks() {
     taskList[editId].values.actPomodoros = actPomodoros
     taskList[editId].values.complete = true
     setComplete(false)
+    completedTasks.push(taskList[editId])
+    taskList.splice(editId, 1)
   }
   const confirmDelete = () => {
     taskList.splice(editId, 1)
@@ -257,13 +278,14 @@ export default function Tasks() {
         </DialogActions>
       </Dialog>
       <Dialog open={complete} onClose={handleClose}>
-        <DialogTitle>How many Pomodoros did it take to complete ?</DialogTitle>
+        <DialogTitle>How many Pomodoros did it take to complete {complete === false ? "" : taskList[editId].values.projectName}?</DialogTitle>
         <DialogContent>
         <TextField
                   id="actPomodoros"
                   name="actPomodoros"
                   label="Actual Pomodoros"
                   type="number"
+                  defaultValue={complete === false ? "Actual Pomodoros" : taskList[editId].values.estPomodoros}
                   fullWidth
                 />
         </DialogContent>
