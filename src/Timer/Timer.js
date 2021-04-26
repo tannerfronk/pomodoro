@@ -53,6 +53,10 @@ export default function TheTimer({
     setPomodoroCount(pomodoroCount + 1);
   };
 
+  const resetCount = () => {
+    setPomodoroCount(0);
+  };
+
   const handleRestart = () => {
     setFinished(0);
   };
@@ -111,7 +115,10 @@ export default function TheTimer({
           )}
         </Timer>{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <Button variant="contained" onClick={resetCount}>
+            Reset Count
+          </Button>
         </div>
       </div>
     );
@@ -124,7 +131,10 @@ export default function TheTimer({
           shortBreakData={shortBreak}
         />{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <Button variant="contained" onClick={resetCount}>
+            Reset Count
+          </Button>
         </div>
       </div>
     );
@@ -182,7 +192,10 @@ export default function TheTimer({
           )}
         </Timer>
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <Button variant="contained" onClick={resetCount}>
+            Reset Count
+          </Button>
         </div>
       </div>
     );
@@ -195,7 +208,10 @@ export default function TheTimer({
           shortBreakData={shortBreak}
         />{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <Button variant="contained" onClick={resetCount}>
+            Reset Count
+          </Button>
         </div>
       </div>
     );
@@ -253,7 +269,10 @@ export default function TheTimer({
           )}
         </Timer>{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <Button variant="contained" onClick={resetCount}>
+            Reset Count
+          </Button>
         </div>
       </div>
     );
@@ -266,7 +285,10 @@ export default function TheTimer({
           shortBreakData={shortBreak}
         />{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <Button variant="contained" onClick={resetCount}>
+            Reset Count
+          </Button>
         </div>
       </div>
     );
@@ -324,7 +346,10 @@ export default function TheTimer({
           )}
         </Timer>{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <Button variant="contained" onClick={resetCount}>
+            Reset Count
+          </Button>
         </div>
       </div>
     );
@@ -337,7 +362,10 @@ export default function TheTimer({
           longBreakData={longBreak}
         />{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <Button variant="contained" onClick={resetCount}>
+            Reset Count
+          </Button>
         </div>
       </div>
     );
