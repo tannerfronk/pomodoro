@@ -39,8 +39,15 @@ const useStyles = makeStyles({
   },
 });
 
-const taskList = []; // to store task objects in
-const completedTasks = [] // to store completed tasks separately
+let taskList = []; // to store task objects in
+let completedTasks = [] // to store completed tasks separately
+
+if(Boolean(localStorage.getItem('pomoTaskList')) == true){
+  let tempGrab = localStorage.getItem('pomoTaskList') // to store task objects in
+  let parseGrab = JSON.parse(tempGrab)
+  taskList = parseGrab.taskList
+  completedTasks = parseGrab.completedTasks
+}
 
 export default function Tasks() {
   const classes = useStyles();
@@ -168,7 +175,8 @@ export default function Tasks() {
             projectName: "New Project",
             notes: "Notes...",
             complete: false,
-            actPomodoros: ""
+            actPomodoros: "",
+            color: '#bbdefe'
           }}
           validationSchema={Yup.object().shape({
             taskName: Yup.string("Enter task name.").required("Name is required"),
