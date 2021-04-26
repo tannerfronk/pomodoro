@@ -7,7 +7,7 @@ import PauseIcon from "@material-ui/icons/Pause";
 import ReplayIcon from "@material-ui/icons/Replay";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import ShortBreak from "../ShortBreak/ShortBreak";
-import LongBreak from "../LongBreak/LongBreak"
+import LongBreak from "../LongBreak/LongBreak";
 
 const useStyles = makeStyles(() => ({
   main: {
@@ -27,11 +27,19 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     padding: "2rem",
   },
+  pomodoroCount: {
+    textAlign: "center",
+  },
 }));
 
-export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }) {
+export default function TheTimer({
+  pomoTimeData,
+  shortBreakData,
+  longBreakData,
+}) {
   const classes = useStyles();
   const [finished, setFinished] = useState(0);
+  const [pomodoroCount, setPomodoroCount] = useState(0);
   const pomoTime = pomoTimeData * 60 * 1000;
   const shortBreak = shortBreakData * 60 * 1000;
   const longBreak = longBreakData * 60 * 1000;
@@ -40,9 +48,14 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
     setFinished(finished + 1);
   };
 
+  const handleFinishUpdatePomodoro = () => {
+    setFinished(finished + 1);
+    setPomodoroCount(pomodoroCount + 1);
+  };
+
   const handleRestart = () => {
-    setFinished(0)
-  }
+    setFinished(0);
+  };
 
   if (finished === 0) {
     return (
@@ -59,7 +72,7 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
           checkpoints={[
             {
               time: 0,
-              callback: () => handleFinish(),
+              callback: () => handleFinishUpdatePomodoro(),
             },
           ]}
         >
@@ -85,7 +98,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
                     <IconButton variant="contained" onClick={pause}>
                       <PauseIcon />
                     </IconButton>
-                    <IconButton variant="contained" onClick={handleFinish}>
+                    <IconButton
+                      variant="contained"
+                      onClick={handleFinishUpdatePomodoro}
+                    >
                       <SkipNextIcon />
                     </IconButton>
                   </div>
@@ -93,7 +109,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
               </div>
             </React.Fragment>
           )}
-        </Timer>
+        </Timer>{" "}
+        <div className={classes.pomodoroCount}>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>
+        </div>
       </div>
     );
   } else if (finished === 1) {
@@ -103,7 +122,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
           onFinish={handleFinish}
           finished={finished}
           shortBreakData={shortBreak}
-        />
+        />{" "}
+        <div className={classes.pomodoroCount}>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>
+        </div>
       </div>
     );
   } else if (finished === 2) {
@@ -121,7 +143,7 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
           checkpoints={[
             {
               time: 0,
-              callback: () => handleFinish(),
+              callback: () => handleFinishUpdatePomodoro(),
             },
           ]}
         >
@@ -147,7 +169,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
                     <IconButton variant="contained" onClick={pause}>
                       <PauseIcon />
                     </IconButton>
-                    <IconButton variant="contained" onClick={handleFinish}>
+                    <IconButton
+                      variant="contained"
+                      onClick={handleFinishUpdatePomodoro}
+                    >
                       <SkipNextIcon />
                     </IconButton>
                   </div>
@@ -156,6 +181,9 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
             </React.Fragment>
           )}
         </Timer>
+        <div className={classes.pomodoroCount}>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>
+        </div>
       </div>
     );
   } else if (finished === 3) {
@@ -165,7 +193,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
           onFinish={handleFinish}
           finished={finished}
           shortBreakData={shortBreak}
-        />
+        />{" "}
+        <div className={classes.pomodoroCount}>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>
+        </div>
       </div>
     );
   } else if (finished === 4) {
@@ -183,7 +214,7 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
           checkpoints={[
             {
               time: 0,
-              callback: () => handleFinish(),
+              callback: () => handleFinishUpdatePomodoro(),
             },
           ]}
         >
@@ -209,7 +240,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
                     <IconButton variant="contained" onClick={pause}>
                       <PauseIcon />
                     </IconButton>
-                    <IconButton variant="contained" onClick={handleFinish}>
+                    <IconButton
+                      variant="contained"
+                      onClick={handleFinishUpdatePomodoro}
+                    >
                       <SkipNextIcon />
                     </IconButton>
                   </div>
@@ -217,7 +251,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
               </div>
             </React.Fragment>
           )}
-        </Timer>
+        </Timer>{" "}
+        <div className={classes.pomodoroCount}>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>
+        </div>
       </div>
     );
   } else if (finished === 5) {
@@ -227,7 +264,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
           onFinish={handleFinish}
           finished={finished}
           shortBreakData={shortBreak}
-        />
+        />{" "}
+        <div className={classes.pomodoroCount}>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>
+        </div>
       </div>
     );
   } else if (finished === 6) {
@@ -245,7 +285,7 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
           checkpoints={[
             {
               time: 0,
-              callback: () => handleFinish(),
+              callback: () => handleFinishUpdatePomodoro(),
             },
           ]}
         >
@@ -271,7 +311,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
                     <IconButton variant="contained" onClick={pause}>
                       <PauseIcon />
                     </IconButton>
-                    <IconButton variant="contained" onClick={handleFinish}>
+                    <IconButton
+                      variant="contained"
+                      onClick={handleFinishUpdatePomodoro}
+                    >
                       <SkipNextIcon />
                     </IconButton>
                   </div>
@@ -279,7 +322,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
               </div>
             </React.Fragment>
           )}
-        </Timer>
+        </Timer>{" "}
+        <div className={classes.pomodoroCount}>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>
+        </div>
       </div>
     );
   } else if (finished === 7) {
@@ -289,7 +335,10 @@ export default function TheTimer({ pomoTimeData, shortBreakData, longBreakData }
           onFinish={handleRestart}
           finished={finished}
           longBreakData={longBreak}
-        />
+        />{" "}
+        <div className={classes.pomodoroCount}>
+          <h2>Pomodoro Count: {pomodoroCount}</h2>
+        </div>
       </div>
     );
   }
