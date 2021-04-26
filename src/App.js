@@ -222,11 +222,6 @@ export default function App() {
         })}
       >
         <div className={classes.drawerHeader} />
-        <div className={classes.btns}>
-          <Button>Pomodoro</Button>
-          <Button>Short Break</Button>
-          <Button>Long Break</Button>
-        </div>
         <TheTimer
           pomoTimeData={pomodoroTime}
           shortBreakData={shortBreak}
