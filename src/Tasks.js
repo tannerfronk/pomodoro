@@ -16,6 +16,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { makeStyles } from "@material-ui/core/styles";
+import ColorPickerButton from './colorPicker'
 // import { render } from "@testing-library/react";
 
 const useStyles = makeStyles({
@@ -264,6 +265,7 @@ export default function Tasks() {
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
+                <Button><ColorPickerButton></ColorPickerButton></Button>
                 <Button type="submit">{editOpen === false ? "Add" : "Edit"}</Button>
               </DialogActions>
             </form>

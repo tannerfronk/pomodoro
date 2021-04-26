@@ -1,39 +1,75 @@
-import React, { Component } from "react";
-import ReactDOM from "react-dom";
-import ColorPicker from "react-color-picker-text";
-import "./styles.css";
+import React from 'react';
+import reactCSS from 'reactcss'
+import { SliderPicker } from 'react-color';
 
-class App extends Component {
-  onColorPickerInfoChange = color => {
-    console.log("Main Color Change", color);
-  };
+class ColorPickerButton extends React.Component {
 
-  render() {
-    // change the default design of the color picker
-    const styles = {
-      title: "Color Picker",
-      labelStyle: {
-        paddingBottom: "7px",
-        fontSize: "11px"
-      },
-      colorTextBoxStyle: {
-        height: "35px",
-        border: "none",
-        borderBottom: "1px solid lightgray",
-        paddingLeft: "35px"
+    state = {
+        displayColorPicker: false,
+        color: {
+          r: '241',
+          g: '112',
+          b: '19',
+          a: '1',
+        },
       }
-    };
-    return (
-      <ColorPicker
-        onColorChange={this.onColorPickerInfoChange}
-        title={styles.title}
-        labelStyle={styles.labelStyle}
-        colorTextBoxStyle={styles.colorTextBoxStyle}
-        pickerType={"Chrome"}
-      />
-    );
-  }
+
+      handleClick = () => {
+        this.setState({ displayColorPicker: !this.state.displayColorPicker })
+      }
+    
+      handleClose = () => {
+        this.setState({ displayColorPicker: false })
+      }
+    
+      handleChange = (color) => {
+        this.setState({ color: color.rgb })
+      }
+
+    render() {
+
+        const styles = reactCSS({
+            'default': {
+                color: {
+                width: '36px',
+                height: '14px',
+                borderRadius: '2px',
+                background: `rgba(${ this.state.color.r }, ${ this.state.color.g }, ${ this.state.color.b }, ${ this.state.color.a })`,
+                },
+                swatch: {
+                padding: '5px',
+                background: '#fff',
+                borderRadius: '1px',
+                boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
+                display: 'inline-block',
+                cursor: 'pointer',
+                },
+                popover: {
+                position: 'absolute',
+                zIndex: '2',
+                },
+                cover: {
+                position: 'fixed',
+                top: '0px',
+                right: '0px',
+                bottom: '0px',
+                left: '0px',
+                },
+            },
+        })
+
+        return (
+            <div>
+                <div style={ styles.swatch } onClick={ this.handleClick }>
+                <div style={ styles.color } />
+                </div>
+                { this.state.displayColorPicker ? <div style={ styles.popover }>
+                <div style={ styles.cover } onClick={ this.handleClose }/>
+                <SliderPicker color={ this.state.color } onChange={ this.handleChange } />
+                </div> : null }
+            </div>
+        )
+    }
 }
 
-const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+export default ColorPickerButton
