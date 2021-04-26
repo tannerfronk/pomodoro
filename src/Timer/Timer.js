@@ -40,6 +40,7 @@ export default function TheTimer({
   const classes = useStyles();
   const [finished, setFinished] = useState(0);
   const [pomodoroCount, setPomodoroCount] = useState(0);
+  const [sessionCount, setSessionCount] = useState(0);
   const pomoTime = pomoTimeData * 60 * 1000;
   const shortBreak = shortBreakData * 60 * 1000;
   const longBreak = longBreakData * 60 * 1000;
@@ -55,10 +56,16 @@ export default function TheTimer({
 
   const resetCount = () => {
     setPomodoroCount(0);
+    setFinished(0);
+    setSessionCount(0);
+  };
+  const finishSession = () => {
+    setSessionCount(sessionCount + 1);
   };
 
   const handleRestart = () => {
     setFinished(0);
+    finishSession();
   };
 
   if (finished === 0) {
@@ -86,7 +93,7 @@ export default function TheTimer({
               <div className={classes.main}>
                 <Card className={classes.card} variant="outlined">
                   <div>
-                    <Button>Pomodoro 1</Button>
+                    <h2>Pomodoro {pomodoroCount + 1}</h2>
                   </div>
                   <div className={classes.time}>
                     <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
@@ -115,9 +122,9 @@ export default function TheTimer({
           )}
         </Timer>{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
-            Reset Count
+            Reset
           </Button>
         </div>
       </div>
@@ -131,9 +138,9 @@ export default function TheTimer({
           shortBreakData={shortBreak}
         />{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
-            Reset Count
+            Reset
           </Button>
         </div>
       </div>
@@ -163,7 +170,7 @@ export default function TheTimer({
               <div className={classes.main}>
                 <Card className={classes.card} variant="outlined">
                   <div>
-                    <Button>Pomodoro 2</Button>
+                    <h2>Pomodoro {pomodoroCount + 1}</h2>
                   </div>
                   <div className={classes.time}>
                     <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
@@ -192,9 +199,9 @@ export default function TheTimer({
           )}
         </Timer>
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
-            Reset Count
+            Reset
           </Button>
         </div>
       </div>
@@ -208,9 +215,9 @@ export default function TheTimer({
           shortBreakData={shortBreak}
         />{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
-            Reset Count
+            Reset
           </Button>
         </div>
       </div>
@@ -240,7 +247,7 @@ export default function TheTimer({
               <div className={classes.main}>
                 <Card className={classes.card} variant="outlined">
                   <div>
-                    <Button>Pomodoro 3</Button>
+                    <h2>Pomodoro {pomodoroCount + 1}</h2>
                   </div>
                   <div className={classes.time}>
                     <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
@@ -269,9 +276,9 @@ export default function TheTimer({
           )}
         </Timer>{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
-            Reset Count
+            Reset
           </Button>
         </div>
       </div>
@@ -285,9 +292,9 @@ export default function TheTimer({
           shortBreakData={shortBreak}
         />{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
-            Reset Count
+            Reset
           </Button>
         </div>
       </div>
@@ -317,7 +324,7 @@ export default function TheTimer({
               <div className={classes.main}>
                 <Card className={classes.card} variant="outlined">
                   <div>
-                    <Button>Pomodoro 4</Button>
+                    <h2>Pomodoro {pomodoroCount + 1}</h2>
                   </div>
                   <div className={classes.time}>
                     <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
@@ -346,9 +353,9 @@ export default function TheTimer({
           )}
         </Timer>{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
-            Reset Count
+            Reset
           </Button>
         </div>
       </div>
@@ -362,9 +369,9 @@ export default function TheTimer({
           longBreakData={longBreak}
         />{" "}
         <div className={classes.pomodoroCount}>
-          <h2>Pomodoro Count: {pomodoroCount}</h2>{" "}
+          <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
-            Reset Count
+            Reset
           </Button>
         </div>
       </div>

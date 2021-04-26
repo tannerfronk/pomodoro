@@ -1,7 +1,7 @@
 import React from "react";
 import Timer from "react-compound-timer";
 import { makeStyles } from "@material-ui/core/styles";
-import { IconButton, Card, Button } from "@material-ui/core";
+import { IconButton, Card } from "@material-ui/core";
 import PlayArrowIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import ReplayIcon from "@material-ui/icons/Replay";
@@ -55,7 +55,7 @@ export default function LongBreak({ longBreakData, save, onFinish, finished }) {
             <div className={classes.main}>
               <Card className={classes.card} variant="outlined">
               <div>
-                  <Button>Long Break</Button>
+              <h2>Long Break</h2>
                 </div>
                 <div className={classes.time}>
                   <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
