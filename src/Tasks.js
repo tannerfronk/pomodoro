@@ -40,6 +40,7 @@ const useStyles = makeStyles({
 });
 
 let taskList = []; // to store task objects in
+let activeTask = []; // to store currently active task to easily reference
 let completedTasks = [] // to store completed tasks separately
 
 if(Boolean(localStorage.getItem('pomoTaskList')) == true){
@@ -56,6 +57,7 @@ export default function Tasks() {
   const [editId, setEditId] = useState(0)
   const [confirm, setConfirm] = useState(false)
   const [complete, setComplete] = useState(false)
+  const [active, setActive] = useState(false)
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
@@ -78,6 +80,7 @@ export default function Tasks() {
         <p>Project Name: {task.values.projectName}</p>
         <p>Notes: {task.values.notes}</p>
         <DialogActions>
+          {taskList[i].values.active === false ? <Button onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
           <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
           <Button onClick={() => handleDelete(i)}>Delete</Button>
           <Button onClick={() => handleComplete(i)}>Complete</Button>
@@ -127,6 +130,19 @@ export default function Tasks() {
     taskList.push({id, values})
   }
 
+  const handleSetActive = (i) => {
+    activeTask = [taskList[i]];
+    setActive(true) // this state doesn't really do anything but could be used if needed
+    resetActive(i).then(
+        taskList[i].values.active = true
+    )
+    setActive(false)
+    setEditId(i) //setting EditId to help trigger rerender of taskList
+  }
+  async function resetActive(i) {
+    await taskList.forEach(task => task.values.active = false)
+  }
+
   const handleEdit = (values) => { //replaces objects values upon edit
     taskList[editId].values = values
   }
@@ -139,7 +155,7 @@ export default function Tasks() {
     setComplete(true)
   }
   const completeTask = () => {//will mark task as complete
-    let actPomodoros = document.getElementById('actPomodoros').value
+    let actPomodoros = document.getElementById('actPomodoros').value // replace this with var passed from Timer.js
     taskList[editId].values.actPomodoros = actPomodoros
     taskList[editId].values.complete = true
     setComplete(false)
@@ -176,7 +192,8 @@ export default function Tasks() {
             notes: "Notes...",
             complete: false,
             actPomodoros: "",
-            color: '#bbdefe'
+            color: '#bbdefe',
+            active: false,
           }}
           validationSchema={Yup.object().shape({
             taskName: Yup.string("Enter task name.").required("Name is required"),
