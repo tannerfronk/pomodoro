@@ -50,7 +50,7 @@ if(Boolean(localStorage.getItem('pomoTaskList')) == true){
   completedTasks = parseGrab.completedTasks
 }
 
-export default function Tasks() {
+export default function Tasks({pomoCount}) {
   const classes = useStyles();
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -76,7 +76,7 @@ export default function Tasks() {
       <Card key={i} className={classes.cards}>
         <h3>Task: {task.values.taskName}</h3>
         <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
-        <p>Actual Pomodoros: {task.values.actPomodoros == 0 ? 'N/A' : task.values.actPomodoros}</p>
+        <p>Actual Pomodoros: {pomoCount}</p>
         <p>Project Name: {task.values.projectName}</p>
         <p>Notes: {task.values.notes}</p>
         <DialogActions>

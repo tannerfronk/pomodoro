@@ -36,6 +36,7 @@ export default function TheTimer({
   pomoTimeData,
   shortBreakData,
   longBreakData,
+  setPomoCount,
 }) {
   const classes = useStyles();
   const [finished, setFinished] = useState(0);
@@ -52,6 +53,7 @@ export default function TheTimer({
   const handleFinishUpdatePomodoro = () => {
     setFinished(finished + 1);
     setPomodoroCount(pomodoroCount + 1);
+    setPomoCount(pomodoroCount + 1)
   };
 
   const resetCount = () => {
