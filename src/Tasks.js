@@ -133,7 +133,6 @@ export default function Tasks() {
   const handleSetActive = (i) => {
     activeTask = [taskList[i]];
     setActive(true) // this state doesn't really do anything but could be used if needed
-    console.log(taskList[i])
     resetActive(i).then(
         taskList[i].values.active = true
     )
