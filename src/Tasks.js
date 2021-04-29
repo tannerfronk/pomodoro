@@ -80,7 +80,7 @@ export default function Tasks() {
         <p>Project Name: {task.values.projectName}</p>
         <p>Notes: {task.values.notes}</p>
         <DialogActions>
-          {taskList[i].values.active === false ? <Button onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
+          {taskList[i].values.active === false ? <Button id={"setActiveBtn"+i} onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
           <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
           <Button onClick={() => handleDelete(i)}>Delete</Button>
           <Button onClick={() => handleComplete(i)}>Complete</Button>
@@ -133,11 +133,16 @@ export default function Tasks() {
   const handleSetActive = (i) => {
     activeTask = [taskList[i]];
     setActive(true) // this state doesn't really do anything but could be used if needed
+    console.log(taskList[i])
     resetActive(i).then(
         taskList[i].values.active = true
     )
     setActive(false)
-    setEditId(i) //setting EditId to help trigger rerender of taskList
+    if(taskList.length === 1){ //fixes instances where rerender doesn't happen with only 1 task when setting active
+      let activeBtn = document.getElementById("setActiveBtn" + i)
+      activeBtn.style.display = "none"
+    }
+    setEditId(i)//setting EditId to keep things consistent with other functions
   }
   async function resetActive(i) {
     await taskList.forEach(task => task.values.active = false)
