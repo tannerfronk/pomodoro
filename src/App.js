@@ -114,6 +114,7 @@ export default function App() {
   const [pomodoroTime, setPomodoroTime] = useState(25);
   const [shortBreak, setShortBreak] = useState(5);
   const [longBreak, setLongBreak] = useState(15);
+  const [pomoCount, setPomoCount] = useState(0);
 
   const handleClickSettingsOpen = () => {
     setSettingsOpen(true);
@@ -226,8 +227,11 @@ export default function App() {
           pomoTimeData={pomodoroTime}
           shortBreakData={shortBreak}
           longBreakData={longBreak}
+          setPomoCount={setPomoCount}
         />
-        <Tasks />
+        <Tasks 
+          pomoCount={pomoCount}
+        />
         <Dialog open={settingsOpen} onClose={handleClickSettingsClose}>
           <Formik
             initialValues={{
