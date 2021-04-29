@@ -40,7 +40,7 @@ const useStyles = makeStyles({
 });
 
 let taskList = []; // to store task objects in
-let activeTask = [];
+let activeTask = []; // to store currently active task to easily reference
 let completedTasks = [] // to store completed tasks separately
 
 if(Boolean(localStorage.getItem('pomoTaskList')) == true){
@@ -155,7 +155,7 @@ export default function Tasks() {
     setComplete(true)
   }
   const completeTask = () => {//will mark task as complete
-    let actPomodoros = document.getElementById('actPomodoros').value
+    let actPomodoros = document.getElementById('actPomodoros').value // replace this with var passed from Timer.js
     taskList[editId].values.actPomodoros = actPomodoros
     taskList[editId].values.complete = true
     setComplete(false)
