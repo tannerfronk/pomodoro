@@ -319,7 +319,7 @@ export default function Tasks({pomoCount}) {
                   name="actPomodoros"
                   label="Actual Pomodoros"
                   type="number"
-                  defaultValue={complete === false ? "Actual Pomodoros" : taskList[editId].values.estPomodoros}
+                  defaultValue={complete === false ? "Actual Pomodoros" : pomoCount}
                   fullWidth
                 />
         </DialogContent>
