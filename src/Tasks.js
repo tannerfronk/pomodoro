@@ -130,13 +130,7 @@ export default function Tasks({pomoCount}) {
   }
 
   const handleSetActive = (i) => {
-    if(activeTask.length === 0){
-      activeTask = [taskList[i]];
-    } else {
-      activeTask[0].values.actPomodoros = pomoCount
-      activeTask = [taskList[i]];
-      pomoCount = 0 //resetting after this var would be great
-    }
+    activeTask = [taskList[i]];
     resetActive(i).then(
         taskList[i].values.active = true
     )
@@ -144,8 +138,6 @@ export default function Tasks({pomoCount}) {
     activeBtn.style.display = "none"
     activeTask = [taskList[i]];
     setEditId(i)//setting EditId to keep things consistent with other functions
-    console.log(taskList)
-    return pomoCount = 0
   }
 
   async function resetActive(i) {
