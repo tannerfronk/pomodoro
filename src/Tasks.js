@@ -57,7 +57,6 @@ export default function Tasks({pomoCount}) {
   const [editId, setEditId] = useState(0)
   const [confirm, setConfirm] = useState(false)
   const [complete, setComplete] = useState(false)
-  const [active, setActive] = useState(false)
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
@@ -71,23 +70,23 @@ export default function Tasks({pomoCount}) {
   function RenderTasks(){ //create tasks in cards
 
     const classes = useStyles();
-  
+
     let incompleteList = taskList.map((task, i) => (
       <Card key={i} className={classes.cards}>
         <h3>Task: {task.values.taskName}</h3>
         <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
-        <p>Actual Pomodoros: {pomoCount}</p>
+        {task.values.active !== false ? <p>Actual Pomodoros: {pomoCount}</p> : <p>Actual Pomodoros: {taskList[i].values.actPomodoros} </p>}
         <p>Project Name: {task.values.projectName}</p>
         <p>Notes: {task.values.notes}</p>
         <DialogActions>
-          {taskList[i].values.active === false ? <Button id={"setActiveBtn"+i} onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
+          {task.values.active === false ? <Button id={"setActiveBtn"+i} onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
           <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
           <Button onClick={() => handleDelete(i)}>Delete</Button>
           <Button onClick={() => handleComplete(i)}>Complete</Button>
         </DialogActions>
       </Card>
     ))
-    
+
     let completeList = completedTasks.map((task, i) => (
       <Card key={i} className={classes.cards}>
         <h3>Task: {task.values.taskName}</h3>
@@ -97,7 +96,7 @@ export default function Tasks({pomoCount}) {
         <p>Notes: {task.values.notes}</p>
       </Card>
     ))
-  
+
     if(taskList <= 0 && completedTasks <= 0) {
       return(
         <h3>No Tasks available, add one!</h3>
@@ -131,18 +130,24 @@ export default function Tasks({pomoCount}) {
   }
 
   const handleSetActive = (i) => {
-    activeTask = [taskList[i]];
-    setActive(true) // this state doesn't really do anything but could be used if needed
+    if(activeTask.length === 0){
+      activeTask = [taskList[i]];
+    } else {
+      activeTask[0].values.actPomodoros = pomoCount
+      activeTask = [taskList[i]];
+      pomoCount = 0 //resetting after this var would be great
+    }
     resetActive(i).then(
         taskList[i].values.active = true
     )
-    setActive(false)
-    if(taskList.length === 1){ //fixes instances where rerender doesn't happen with only 1 task when setting active
-      let activeBtn = document.getElementById("setActiveBtn" + i)
-      activeBtn.style.display = "none"
-    }
+    let activeBtn = document.getElementById("setActiveBtn" + i)//makes current active task setActiveBtn disappear
+    activeBtn.style.display = "none"
+    activeTask = [taskList[i]];
     setEditId(i)//setting EditId to keep things consistent with other functions
+    console.log(taskList)
+    return pomoCount = 0
   }
+
   async function resetActive(i) {
     await taskList.forEach(task => task.values.active = false)
   }
@@ -159,7 +164,7 @@ export default function Tasks({pomoCount}) {
     setComplete(true)
   }
   const completeTask = () => {//will mark task as complete
-    let actPomodoros = document.getElementById('actPomodoros').value // replace this with var passed from Timer.js
+    let actPomodoros = pomoCount // replace this with var passed from Timer.js
     taskList[editId].values.actPomodoros = actPomodoros
     taskList[editId].values.complete = true
     setComplete(false)
@@ -177,7 +182,7 @@ export default function Tasks({pomoCount}) {
     setConfirm(false);
     setComplete(false);
   };
-  
+
   return (
     <div>
       <div className={classes.taskHeader}>
@@ -195,7 +200,7 @@ export default function Tasks({pomoCount}) {
             projectName: "New Project",
             notes: "Notes...",
             complete: false,
-            actPomodoros: "",
+            actPomodoros: 0,
             color: '#bbdefe',
             active: false,
           }}
