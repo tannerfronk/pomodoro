@@ -37,17 +37,43 @@ export default function TheTimer({
   shortBreakData,
   longBreakData,
   finished,
-  pomodoroCount,
+  pomoCount,
   sessionCount,
   handleFinishUpdatePomodoro,
   handleFinish,
   resetCount,
   handleRestart,
+  setPomoCount,
 }) {
   const classes = useStyles();
   const pomoTime = pomoTimeData * 60 * 1000;
   const shortBreak = shortBreakData * 60 * 1000;
   const longBreak = longBreakData * 60 * 1000;
+
+
+  // const handleFinish = () => {
+  //   setFinished(finished + 1);
+  // };
+
+  // const handleFinishUpdatePomodoro = () => {
+  //   setFinished(finished + 1);
+  //   setPomodoroCount(pomodoroCount + 1);
+  //   setPomoCount(pomodoroCount + 1)
+  // };
+
+  // const resetCount = () => {
+  //   setPomodoroCount(0);
+  //   setFinished(0);
+  //   setSessionCount(0);
+  // };
+  // const finishSession = () => {
+  //   setSessionCount(sessionCount + 1);
+  // };
+
+  // const handleRestart = () => {
+  //   setFinished(0);
+  //   finishSession();
+  // };
 
   if (finished === 0) {
     return (

@@ -137,10 +137,10 @@ export default function App() {
   const [shortBreak, setShortBreak] = useState(5);
   const [longBreak, setLongBreak] = useState(15);
   const [finished, setFinished] = useState(0);
-  const [pomodoroCount, setPomodoroCount] = useState(0);
+  const [pomoCount, setPomoCount] = useState(0);
   const [sessionCount, setSessionCount] = useState(0);
 
-  const totalTime = pomodoroCount * pomodoroTime
+  const totalTime = pomoCount * pomodoroTime
 
   console.log(pomodoroTime)
 
@@ -150,11 +150,11 @@ export default function App() {
 
   const handleFinishUpdatePomodoro = () => {
     setFinished(finished + 1);
-    setPomodoroCount(pomodoroCount + 1);
+    setpomoCount(pomoCount + 1);
   };
 
   const resetCount = () => {
-    setPomodoroCount(0);
+    setpomoCount(0);
     setFinished(0);
     setSessionCount(0);
   };
@@ -166,6 +166,7 @@ export default function App() {
     setFinished(0);
     finishSession();
   };
+
 
   const handleClickSettingsOpen = () => {
     setSettingsOpen(true);
@@ -211,7 +212,7 @@ export default function App() {
   const body = (
     <div style={modalStyle} className={classes.paper}>
       <h2 id="report-modal">Reports</h2>
-      <p>Total Pomodoros: {pomodoroCount}</p>
+      <p>Total Pomodoros: {pomoCount}</p>
       <p>Total Sessions: {sessionCount}</p>
       <p>Total Time: {totalTime} minutes</p>
     </div>
@@ -305,14 +306,17 @@ export default function App() {
           shortBreakData={shortBreak}
           longBreakData={longBreak}
           finished={finished}
-          pomodoroCount={pomodoroCount}
+          pomoCount={pomoCount}
           sessionCount={sessionCount}
           handleFinishUpdatePomodoro={handleFinishUpdatePomodoro}
           handleFinish={handleFinish}
           resetCount={resetCount}
           handleRestart={handleRestart}
+          setPomoCount={setPomoCount}
         />
-        <Tasks />
+        <Tasks 
+          pomoCount={pomoCount}
+        />
         <Dialog open={settingsOpen} onClose={handleClickSettingsClose}>
           <Formik
             initialValues={{

@@ -16,6 +16,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { makeStyles } from "@material-ui/core/styles";
+import ColorPickerButton from './colorPicker'
 // import { render } from "@testing-library/react";
 
 const useStyles = makeStyles({
@@ -38,16 +39,25 @@ const useStyles = makeStyles({
   },
 });
 
-const taskList = []; // to store task objects in
-const completedTasks = [] // to store completed tasks separately
+let taskList = []; // to store task objects in
+let activeTask = []; // to store currently active task to easily reference
+let completedTasks = [] // to store completed tasks separately
 
-export default function Tasks() {
+if(Boolean(localStorage.getItem('pomoTaskList')) == true){
+  let tempGrab = localStorage.getItem('pomoTaskList') // to store task objects in
+  let parseGrab = JSON.parse(tempGrab)
+  taskList = parseGrab.taskList
+  completedTasks = parseGrab.completedTasks
+}
+
+export default function Tasks({pomoCount}) {
   const classes = useStyles();
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [editId, setEditId] = useState(0)
   const [confirm, setConfirm] = useState(false)
   const [complete, setComplete] = useState(false)
+  const [active, setActive] = useState(false)
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
@@ -66,10 +76,11 @@ export default function Tasks() {
       <Card key={i} className={classes.cards}>
         <h3>Task: {task.values.taskName}</h3>
         <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
-        <p>Actual Pomodoros: {task.values.actPomodoros == 0 ? 'N/A' : task.values.actPomodoros}</p>
+        <p>Actual Pomodoros: {pomoCount}</p>
         <p>Project Name: {task.values.projectName}</p>
         <p>Notes: {task.values.notes}</p>
         <DialogActions>
+          {taskList[i].values.active === false ? <Button id={"setActiveBtn"+i} onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
           <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
           <Button onClick={() => handleDelete(i)}>Delete</Button>
           <Button onClick={() => handleComplete(i)}>Complete</Button>
@@ -119,6 +130,23 @@ export default function Tasks() {
     taskList.push({id, values})
   }
 
+  const handleSetActive = (i) => {
+    activeTask = [taskList[i]];
+    setActive(true) // this state doesn't really do anything but could be used if needed
+    resetActive(i).then(
+        taskList[i].values.active = true
+    )
+    setActive(false)
+    if(taskList.length === 1){ //fixes instances where rerender doesn't happen with only 1 task when setting active
+      let activeBtn = document.getElementById("setActiveBtn" + i)
+      activeBtn.style.display = "none"
+    }
+    setEditId(i)//setting EditId to keep things consistent with other functions
+  }
+  async function resetActive(i) {
+    await taskList.forEach(task => task.values.active = false)
+  }
+
   const handleEdit = (values) => { //replaces objects values upon edit
     taskList[editId].values = values
   }
@@ -131,7 +159,7 @@ export default function Tasks() {
     setComplete(true)
   }
   const completeTask = () => {//will mark task as complete
-    let actPomodoros = document.getElementById('actPomodoros').value
+    let actPomodoros = document.getElementById('actPomodoros').value // replace this with var passed from Timer.js
     taskList[editId].values.actPomodoros = actPomodoros
     taskList[editId].values.complete = true
     setComplete(false)
@@ -167,7 +195,9 @@ export default function Tasks() {
             projectName: "New Project",
             notes: "Notes...",
             complete: false,
-            actPomodoros: ""
+            actPomodoros: "",
+            color: '#bbdefe',
+            active: false,
           }}
           validationSchema={Yup.object().shape({
             taskName: Yup.string("Enter task name.").required("Name is required"),
@@ -264,6 +294,7 @@ export default function Tasks() {
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
+                <Button><ColorPickerButton></ColorPickerButton></Button>
                 <Button type="submit">{editOpen === false ? "Add" : "Edit"}</Button>
               </DialogActions>
             </form>
@@ -288,7 +319,7 @@ export default function Tasks() {
                   name="actPomodoros"
                   label="Actual Pomodoros"
                   type="number"
-                  defaultValue={complete === false ? "Actual Pomodoros" : taskList[editId].values.estPomodoros}
+                  defaultValue={complete === false ? "Actual Pomodoros" : pomoCount}
                   fullWidth
                 />
         </DialogContent>
