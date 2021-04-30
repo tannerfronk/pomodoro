@@ -18,6 +18,7 @@ import {
   DialogContent,
   TextField,
   DialogActions,
+  Modal,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -34,6 +35,17 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 
 const drawerWidth = 240;
+
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -103,17 +115,57 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     height: 350,
   },
+  paper: {
+    position: "absolute",
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: "2px solid #000",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
 }));
 
 export default function App() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [openReport, setOpenReport] = useState(false);
+  const [modalStyle] = useState(getModalStyle);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [pomodoroTime, setPomodoroTime] = useState(25);
   const [shortBreak, setShortBreak] = useState(5);
   const [longBreak, setLongBreak] = useState(15);
+  const [finished, setFinished] = useState(0);
+  const [pomodoroCount, setPomodoroCount] = useState(0);
+  const [sessionCount, setSessionCount] = useState(0);
+
+  const totalTime = pomodoroCount * pomodoroTime
+
+  console.log(pomodoroTime)
+
+  const handleFinish = () => {
+    setFinished(finished + 1);
+  };
+
+  const handleFinishUpdatePomodoro = () => {
+    setFinished(finished + 1);
+    setPomodoroCount(pomodoroCount + 1);
+  };
+
+  const resetCount = () => {
+    setPomodoroCount(0);
+    setFinished(0);
+    setSessionCount(0);
+  };
+  const finishSession = () => {
+    setSessionCount(sessionCount + 1);
+  };
+
+  const handleRestart = () => {
+    setFinished(0);
+    finishSession();
+  };
 
   const handleClickSettingsOpen = () => {
     setSettingsOpen(true);
@@ -139,12 +191,31 @@ export default function App() {
     setOpen(false);
   };
 
+  const handleOpenReport = () => {
+    setOpenReport(true);
+  };
+
+  const handleCloseReport = () => {
+    setOpenReport(false);
+  };
+
+
+
   const handleSave = (values) => {
     setPomodoroTime(values.pomoTime);
     setShortBreak(values.shortBreak);
     setLongBreak(values.longBreak);
     console.log(values.pomoTime, values.shortBreak, values.longBreak);
   };
+
+  const body = (
+    <div style={modalStyle} className={classes.paper}>
+      <h2 id="report-modal">Reports</h2>
+      <p>Total Pomodoros: {pomodoroCount}</p>
+      <p>Total Sessions: {sessionCount}</p>
+      <p>Total Time: {totalTime} minutes</p>
+    </div>
+  );
 
   return (
     <div className={classes.root}>
@@ -196,12 +267,19 @@ export default function App() {
             </ListItemIcon>
             <ListItemText>Timer</ListItemText>
           </ListItem>
-          <ListItem button>
+          <ListItem button onClick={() => handleOpenReport()}>
             <ListItemIcon>
               <AssessmentIcon />
             </ListItemIcon>
             <ListItemText>Report</ListItemText>
           </ListItem>
+          <Modal
+            open={openReport}
+            onClose={handleCloseReport}
+            aria-labelledby="report-modal"
+          >
+            {body}
+          </Modal>
           <ListItem button onClick={() => handleClickSettingsOpen()}>
             <ListItemIcon>
               <SettingsIcon />
@@ -226,6 +304,13 @@ export default function App() {
           pomoTimeData={pomodoroTime}
           shortBreakData={shortBreak}
           longBreakData={longBreak}
+          finished={finished}
+          pomodoroCount={pomodoroCount}
+          sessionCount={sessionCount}
+          handleFinishUpdatePomodoro={handleFinishUpdatePomodoro}
+          handleFinish={handleFinish}
+          resetCount={resetCount}
+          handleRestart={handleRestart}
         />
         <Tasks />
         <Dialog open={settingsOpen} onClose={handleClickSettingsClose}>
