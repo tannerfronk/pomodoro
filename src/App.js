@@ -33,6 +33,7 @@ import PersonIcon from "@material-ui/icons/Person";
 import TheTimer from "./Timer/Timer";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Bar } from "react-chartjs-2";
 
 const drawerWidth = 240;
 
@@ -117,7 +118,6 @@ const useStyles = makeStyles((theme) => ({
   },
   paper: {
     position: "absolute",
-    width: 400,
     backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",
     boxShadow: theme.shadows[5],
@@ -140,9 +140,21 @@ export default function App() {
   const [pomoCount, setPomoCount] = useState(0);
   const [sessionCount, setSessionCount] = useState(0);
 
-  const totalTime = pomoCount * pomodoroTime
+  const totalTime = (pomoCount * pomodoroTime)/60;
 
-  console.log(pomodoroTime)
+
+  const state = {
+    labels: ["Total Pomodoros", "Total Sessions", "Total Hours"],
+    datasets: [
+      {
+        label: "Totals",
+        backgroundColor: '#3f51b5',
+        borderColor: "rgba(0,0,0,1)",
+        borderWidth: 2,
+        data: [pomoCount, sessionCount, totalTime],
+      },
+    ],
+  };
 
   const handleFinish = () => {
     setFinished(finished + 1);
@@ -150,11 +162,11 @@ export default function App() {
 
   const handleFinishUpdatePomodoro = () => {
     setFinished(finished + 1);
-    setpomoCount(pomoCount + 1);
+    setPomoCount(pomoCount + 1);
   };
 
   const resetCount = () => {
-    setpomoCount(0);
+    setPomoCount(0);
     setFinished(0);
     setSessionCount(0);
   };
@@ -166,7 +178,6 @@ export default function App() {
     setFinished(0);
     finishSession();
   };
-
 
   const handleClickSettingsOpen = () => {
     setSettingsOpen(true);
@@ -200,8 +211,6 @@ export default function App() {
     setOpenReport(false);
   };
 
-
-
   const handleSave = (values) => {
     setPomodoroTime(values.pomoTime);
     setShortBreak(values.shortBreak);
@@ -212,9 +221,19 @@ export default function App() {
   const body = (
     <div style={modalStyle} className={classes.paper}>
       <h2 id="report-modal">Reports</h2>
-      <p>Total Pomodoros: {pomoCount}</p>
-      <p>Total Sessions: {sessionCount}</p>
-      <p>Total Time: {totalTime} minutes</p>
+      <Bar
+        data={state}
+        options={{
+          title: {
+            display: true,
+            fontSize: 20,
+          },
+          legend: {
+            display: true,
+            position: "right",
+          },
+        }}
+      />
     </div>
   );
 
@@ -301,6 +320,7 @@ export default function App() {
         })}
       >
         <div className={classes.drawerHeader} />
+
         <TheTimer
           pomoTimeData={pomodoroTime}
           shortBreakData={shortBreak}
@@ -314,9 +334,7 @@ export default function App() {
           handleRestart={handleRestart}
           setPomoCount={setPomoCount}
         />
-        <Tasks 
-          pomoCount={pomoCount}
-        />
+        <Tasks pomoCount={pomoCount} />
         <Dialog open={settingsOpen} onClose={handleClickSettingsClose}>
           <Formik
             initialValues={{
