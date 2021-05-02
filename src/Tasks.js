@@ -42,12 +42,15 @@ const useStyles = makeStyles({
 let taskList = []; // to store task objects in
 let activeTask = []; // to store currently active task to easily reference
 let completedTasks = [] // to store completed tasks separately
+let localStorageItem
 
-if(Boolean(localStorage.getItem('pomoTaskList')) == true){
+if(Boolean(localStorage.getItem('pomoTaskList')) === true){
   let tempGrab = localStorage.getItem('pomoTaskList') // to store task objects in
   let parseGrab = JSON.parse(tempGrab)
-  taskList = parseGrab.taskList
-  completedTasks = parseGrab.completedTasks
+  console.log('Localstorage Fetch: ')
+  console.log(parseGrab)
+  taskList = parseGrab.tlLocal
+  completedTasks = parseGrab.ctLocal
 }
 
 export default function Tasks({pomoCount}) {
@@ -57,6 +60,17 @@ export default function Tasks({pomoCount}) {
   const [editId, setEditId] = useState(0)
   const [confirm, setConfirm] = useState(false)
   const [complete, setComplete] = useState(false)
+  const [color, setColor] = useState(null)
+
+  const setLocalStorage = () =>{
+    localStorageItem = {tlLocal: taskList, ctLocal: completedTasks}
+    localStorage.setItem('pomoTaskList', JSON.stringify(localStorageItem))
+  }
+
+  const sendColorData = (colorChoice, i) =>{
+    setEditId(i)
+    setColor(colorChoice)
+  }
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
@@ -165,6 +179,9 @@ export default function Tasks({pomoCount}) {
   }
   const confirmDelete = () => {
     taskList.splice(editId, 1)
+    setLocalStorage()
+    // localStorage.setItem('pomoTaskList', JSON.stringify(localStorageItem))
+    console.log(localStorageItem)
     setConfirm(false)
   }
 
