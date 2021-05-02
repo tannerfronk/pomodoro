@@ -141,6 +141,7 @@ export default function Tasks({pomoCount}) {
       id = previousId + 1;
     }
     taskList.push({id, values})
+    setLocalStorage()
   }
 
   const handleSetActive = (i) => {
@@ -152,6 +153,7 @@ export default function Tasks({pomoCount}) {
     activeBtn.style.display = "none"
     activeTask = [taskList[i]];
     setEditId(i)//setting EditId to keep things consistent with other functions
+    setLocalStorage()
   }
 
   async function resetActive(i) {
@@ -168,6 +170,7 @@ export default function Tasks({pomoCount}) {
   const handleComplete = (i) => {//grabs id for current task
     setEditId(i)
     setComplete(true)
+    setLocalStorage()
   }
   const completeTask = () => {//will mark task as complete
     let actPomodoros = pomoCount // replace this with var passed from Timer.js
@@ -176,12 +179,11 @@ export default function Tasks({pomoCount}) {
     setComplete(false)
     completedTasks.push(taskList[editId])
     taskList.splice(editId, 1)
+    setLocalStorage()
   }
   const confirmDelete = () => {
     taskList.splice(editId, 1)
     setLocalStorage()
-    // localStorage.setItem('pomoTaskList', JSON.stringify(localStorageItem))
-    console.log(localStorageItem)
     setConfirm(false)
   }
 
@@ -190,6 +192,7 @@ export default function Tasks({pomoCount}) {
     setEditOpen(false);
     setConfirm(false);
     setComplete(false);
+    setLocalStorage()
   };
 
   return (
