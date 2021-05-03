@@ -1,13 +1,8 @@
-/* .MuiCircularProgress-root {
+.MuiCircularProgress-root {
   width: 200px !important;
   height: 200px !important;
 }
 
 .MuiListItemIcon-root {
   min-width: 30px !important;
-} */
-
-canvas {
-  width: 500px !important;
-  height: 300px !important;
 }
