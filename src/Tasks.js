@@ -151,7 +151,7 @@ export default function Tasks({pomoCount}) {
       <Card key={i} className={classes.cards}>
         <h3>Task: {task.values.taskName}</h3>
         <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
-        <p>Actual Pomodoros: {task.values.actPomodoros == 0 ? 'N/A' : task.values.actPomodoros}</p>
+        <p>Actual Pomodoros: {task.values.actPomodoros === 0 ? 'N/A' : task.values.actPomodoros}</p>
         <p>Project Name: {task.values.projectName}</p>
         <p>Notes: {task.values.notes}</p>
       </Card>
@@ -207,7 +207,7 @@ export default function Tasks({pomoCount}) {
     )
     let activeBtn = document.getElementById("setActiveBtn" + i)//makes current active task setActiveBtn disappear
     activeBtn.style.display = "none"
-    activeTask = [taskList[i]];
+    // activeTask = [taskList[i]];
     setEditId(i)//setting EditId to keep things consistent with other functions
     setLocalStorage()
   }

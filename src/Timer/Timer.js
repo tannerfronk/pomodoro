@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Timer from "react-compound-timer";
 import { makeStyles } from "@material-ui/core/styles";
 import { IconButton, Card, Button } from "@material-ui/core";
@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
     alignItems: "center",
     padding: "2rem",
   },
-  pomodoroCount: {
+  pomoCount: {
     textAlign: "center",
   },
 }));
@@ -36,40 +36,19 @@ export default function TheTimer({
   pomoTimeData,
   shortBreakData,
   longBreakData,
-  setPomoCount,
+  finished,
+  pomoCount,
+  sessionCount,
+  handleFinishUpdatePomodoro,
+  handleFinish,
+  resetCount,
+  handleRestart,
 }) {
   const classes = useStyles();
-  const [finished, setFinished] = useState(0);
-  const [pomodoroCount, setPomodoroCount] = useState(0);
-  const [sessionCount, setSessionCount] = useState(0);
   const pomoTime = pomoTimeData * 60 * 1000;
   const shortBreak = shortBreakData * 60 * 1000;
   const longBreak = longBreakData * 60 * 1000;
   const audioElement = new Audio("//onlineclock.net/audio/options/default.mp3");
-
-  const handleFinish = () => {
-    setFinished(finished + 1);
-  };
-
-  const handleFinishUpdatePomodoro = () => {
-    setFinished(finished + 1);
-    setPomodoroCount(pomodoroCount + 1);
-    setPomoCount(pomodoroCount + 1)
-  };
-
-  const resetCount = () => {
-    setPomodoroCount(0);
-    setFinished(0);
-    setSessionCount(0);
-  };
-  const finishSession = () => {
-    setSessionCount(sessionCount + 1);
-  };
-
-  const handleRestart = () => {
-    setFinished(0);
-    finishSession();
-  };
 
   const playAlarm = () => {
     audioElement.play();
@@ -104,7 +83,7 @@ export default function TheTimer({
               <div className={classes.main}>
                 <Card className={classes.card} variant="outlined">
                   <div>
-                    <h2>Pomodoro {pomodoroCount + 1}</h2>
+                    <h2>Pomodoro {pomoCount + 1}</h2>
                   </div>
                   <div className={classes.time}>
                     <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
@@ -132,7 +111,7 @@ export default function TheTimer({
             </React.Fragment>
           )}
         </Timer>{" "}
-        <div className={classes.pomodoroCount}>
+        <div className={classes.pomoCount}>
           <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
             Reset
@@ -148,7 +127,7 @@ export default function TheTimer({
           finished={finished}
           shortBreakData={shortBreak}
         />{" "}
-        <div className={classes.pomodoroCount}>
+        <div className={classes.pomoCount}>
           <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
             Reset
@@ -185,7 +164,7 @@ export default function TheTimer({
               <div className={classes.main}>
                 <Card className={classes.card} variant="outlined">
                   <div>
-                    <h2>Pomodoro {pomodoroCount + 1}</h2>
+                    <h2>Pomodoro {pomoCount + 1}</h2>
                   </div>
                   <div className={classes.time}>
                     <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
@@ -213,7 +192,7 @@ export default function TheTimer({
             </React.Fragment>
           )}
         </Timer>
-        <div className={classes.pomodoroCount}>
+        <div className={classes.pomoCount}>
           <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
             Reset
@@ -229,7 +208,7 @@ export default function TheTimer({
           finished={finished}
           shortBreakData={shortBreak}
         />{" "}
-        <div className={classes.pomodoroCount}>
+        <div className={classes.pomoCount}>
           <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
             Reset
@@ -266,7 +245,7 @@ export default function TheTimer({
               <div className={classes.main}>
                 <Card className={classes.card} variant="outlined">
                   <div>
-                    <h2>Pomodoro {pomodoroCount + 1}</h2>
+                    <h2>Pomodoro {pomoCount + 1}</h2>
                   </div>
                   <div className={classes.time}>
                     <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
@@ -294,8 +273,8 @@ export default function TheTimer({
             </React.Fragment>
           )}
         </Timer>{" "}
-        <div className={classes.pomodoroCount}>
-          <h2>Session Count: {sessionCount}</h2>{" "}
+        <div className={classes.pomoCount}>
+          <h2>Session Count: {sessionCount}</h2>
           <Button variant="contained" onClick={resetCount}>
             Reset
           </Button>
@@ -310,7 +289,7 @@ export default function TheTimer({
           finished={finished}
           shortBreakData={shortBreak}
         />{" "}
-        <div className={classes.pomodoroCount}>
+        <div className={classes.pomoCount}>
           <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
             Reset
@@ -347,7 +326,7 @@ export default function TheTimer({
               <div className={classes.main}>
                 <Card className={classes.card} variant="outlined">
                   <div>
-                    <h2>Pomodoro {pomodoroCount + 1}</h2>
+                    <h2>Pomodoro {pomoCount + 1}</h2>
                   </div>
                   <div className={classes.time}>
                     <Timer.Minutes /> Minutes <Timer.Seconds /> Seconds
@@ -375,7 +354,7 @@ export default function TheTimer({
             </React.Fragment>
           )}
         </Timer>{" "}
-        <div className={classes.pomodoroCount}>
+        <div className={classes.pomoCount}>
           <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
             Reset
@@ -391,7 +370,7 @@ export default function TheTimer({
           finished={finished}
           longBreakData={longBreak}
         />{" "}
-        <div className={classes.pomodoroCount}>
+        <div className={classes.pomoCount}>
           <h2>Session Count: {sessionCount}</h2>{" "}
           <Button variant="contained" onClick={resetCount}>
             Reset

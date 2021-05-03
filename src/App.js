@@ -18,6 +18,7 @@ import {
   DialogContent,
   TextField,
   DialogActions,
+  Modal,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -32,8 +33,20 @@ import PersonIcon from "@material-ui/icons/Person";
 import TheTimer from "./Timer/Timer";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Bar } from "react-chartjs-2";
 
 const drawerWidth = 240;
+
+function getModalStyle() {
+  const top = 50;
+  const left = 50;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -103,18 +116,68 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     height: 350,
   },
+  paper: {
+    position: "absolute",
+    backgroundColor: theme.palette.background.paper,
+    border: "2px solid #000",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
 }));
 
 export default function App() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = useState(false);
+  const [openReport, setOpenReport] = useState(false);
+  const [modalStyle] = useState(getModalStyle);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
   const [pomodoroTime, setPomodoroTime] = useState(25);
   const [shortBreak, setShortBreak] = useState(5);
   const [longBreak, setLongBreak] = useState(15);
+  const [finished, setFinished] = useState(0);
   const [pomoCount, setPomoCount] = useState(0);
+  const [sessionCount, setSessionCount] = useState(0);
+
+  const totalTime = (pomoCount * pomodoroTime)/60;
+
+
+  const state = {
+    labels: ["Total Pomodoros", "Total Sessions", "Total Hours"],
+    datasets: [
+      {
+        label: "Totals",
+        backgroundColor: '#3f51b5',
+        borderColor: "rgba(0,0,0,1)",
+        borderWidth: 2,
+        data: [pomoCount, sessionCount, totalTime],
+      },
+    ],
+  };
+
+  const handleFinish = () => {
+    setFinished(finished + 1);
+  };
+
+  const handleFinishUpdatePomodoro = () => {
+    setFinished(finished + 1);
+    setPomoCount(pomoCount + 1);
+  };
+
+  const resetCount = () => {
+    setPomoCount(0);
+    setFinished(0);
+    setSessionCount(0);
+  };
+  const finishSession = () => {
+    setSessionCount(sessionCount + 1);
+  };
+
+  const handleRestart = () => {
+    setFinished(0);
+    finishSession();
+  };
 
   const handleClickSettingsOpen = () => {
     setSettingsOpen(true);
@@ -140,12 +203,39 @@ export default function App() {
     setOpen(false);
   };
 
+  const handleOpenReport = () => {
+    setOpenReport(true);
+  };
+
+  const handleCloseReport = () => {
+    setOpenReport(false);
+  };
+
   const handleSave = (values) => {
     setPomodoroTime(values.pomoTime);
     setShortBreak(values.shortBreak);
     setLongBreak(values.longBreak);
     console.log(values.pomoTime, values.shortBreak, values.longBreak);
   };
+
+  const body = (
+    <div style={modalStyle} className={classes.paper}>
+      <h2 id="report-modal">Reports</h2>
+      <Bar
+        data={state}
+        options={{
+          title: {
+            display: true,
+            fontSize: 20,
+          },
+          legend: {
+            display: true,
+            position: "right",
+          },
+        }}
+      />
+    </div>
+  );
 
   return (
     <div className={classes.root}>
@@ -197,12 +287,19 @@ export default function App() {
             </ListItemIcon>
             <ListItemText>Timer</ListItemText>
           </ListItem>
-          <ListItem button>
+          <ListItem button onClick={() => handleOpenReport()}>
             <ListItemIcon>
               <AssessmentIcon />
             </ListItemIcon>
             <ListItemText>Report</ListItemText>
           </ListItem>
+          <Modal
+            open={openReport}
+            onClose={handleCloseReport}
+            aria-labelledby="report-modal"
+          >
+            {body}
+          </Modal>
           <ListItem button onClick={() => handleClickSettingsOpen()}>
             <ListItemIcon>
               <SettingsIcon />
@@ -223,15 +320,21 @@ export default function App() {
         })}
       >
         <div className={classes.drawerHeader} />
+
         <TheTimer
           pomoTimeData={pomodoroTime}
           shortBreakData={shortBreak}
           longBreakData={longBreak}
+          finished={finished}
+          pomoCount={pomoCount}
+          sessionCount={sessionCount}
+          handleFinishUpdatePomodoro={handleFinishUpdatePomodoro}
+          handleFinish={handleFinish}
+          resetCount={resetCount}
+          handleRestart={handleRestart}
           setPomoCount={setPomoCount}
         />
-        <Tasks 
-          pomoCount={pomoCount}
-        />
+        <Tasks pomoCount={pomoCount} />
         <Dialog open={settingsOpen} onClose={handleClickSettingsClose}>
           <Formik
             initialValues={{
