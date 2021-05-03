@@ -1,6 +1,7 @@
 import React from 'react';
 import reactCSS from 'reactcss'
 import { SliderPicker } from 'react-color';
+import "./App.css"
 
 class ColorPickerButton extends React.Component {
 
@@ -24,6 +25,7 @@ class ColorPickerButton extends React.Component {
     
       handleChange = (color) => {
         this.setState({ color: color.rgb })
+        this.props.sendColorData(color, this.props.editId)
       }
 
     render() {
@@ -55,20 +57,30 @@ class ColorPickerButton extends React.Component {
                 bottom: '0px',
                 left: '0px',
                 },
+                width: {
+                  width: '25rem',
+                },
             },
         })
 
         return (
-            <div>
-                <div style={ styles.swatch } onClick={ this.handleClick }>
-                <div style={ styles.color } />
-                </div>
-                { this.state.displayColorPicker ? <div style={ styles.popover }>
-                <div style={ styles.cover } onClick={ this.handleClose }/>
-                <SliderPicker color={ this.state.color } onChange={ this.handleChange } />
-                </div> : null }
-            </div>
+
+          <SliderPicker className='colorPickerFix' color={ this.state.color } onChange={ this.handleChange } />
+          // <div style={ styles.popover }>
+          //   <div style={ styles.cover } onClick={ this.handleClose }/>
+          //   <SliderPicker color={ this.state.color } onChange={ this.handleChange } />
+          // </div>
         )
+
+        // <div>
+        //   <div style={ styles.swatch } onClick={ this.handleClick }>
+        //     <div style={ styles.color } />
+        //   </div>
+        //   { this.state.displayColorPicker ? <div style={ styles.popover }>
+        //   <div style={ styles.cover } onClick={ this.handleClose }/>
+        //   <SketchPicker color={ this.state.color } onChange={ this.handleChange } />
+        //   </div> : null }
+        // </div>
     }
 }
 
