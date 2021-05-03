@@ -18,6 +18,7 @@ import * as Yup from "yup";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from 'clsx'
 import ColorPickerButton from './colorPicker'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 // import { render } from "@testing-library/react";
 
 const useStyles = makeStyles({
@@ -77,8 +78,9 @@ export default function Tasks({pomoCount}) {
   const [editId, setEditId] = useState(0)
   const [confirm, setConfirm] = useState(false)
   const [complete, setComplete] = useState(false)
-  const [color, setColor] = useState(null)
+  const [color, setColor] = useState('#fff')
   const [colorOpen, setColorOpen] = useState(false)
+  const [dAndD, setDAndD] = useState(taskList)
 
   const setLocalStorage = () =>{
     localStorageItem = {tlLocal: taskList, ctLocal: completedTasks}
@@ -89,6 +91,23 @@ export default function Tasks({pomoCount}) {
     setColor(colorChoice)
     editOpen === false ? setColor(colorChoice) : taskList[editId].values.color = colorChoice.hex
     setLocalStorage()
+  }
+
+  const handleOnDragEnd = (result) =>{
+    console.log(result)
+    if (!result.destination) {
+      return;
+    }
+
+    if (result.destination.index === result.source.index) {
+      return;
+    }
+
+    const dragItems = Array.from(dAndD);
+    console.log(dragItems)
+    const [reorderedItem] = dragItems.splice(result.source.index, 1);
+    dragItems.splice(result.destination.index, 0, reorderedItem);
+    setDAndD(dragItems);
   }
 
   const handleClickAddOpen = () => {
@@ -105,23 +124,27 @@ export default function Tasks({pomoCount}) {
     const classes = useStyles();
     const multiClass = clsx(classes.cards, classes.cardColorGrid)
 
-    let incompleteList = taskList.map((task, i) => (
-      <Card key={i} className={multiClass}>
-        <div style={{ backgroundColor: task.values.color, margin: '0rem 1rem 0rem 0rem'}} ></div>
-        <div>
-          <h3>Task: {task.values.taskName}</h3>
-          <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
-          {task.values.active !== false ? <p>Actual Pomodoros: {pomoCount}</p> : <p>Actual Pomodoros: {taskList[i].values.actPomodoros} </p>}
-          <p>Project Name: {task.values.projectName}</p>
-          <p>Notes: {task.values.notes}</p>
-          <DialogActions>
-            {task.values.active === false ? <Button id={"setActiveBtn"+i} onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
-            <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
-            <Button onClick={() => handleDelete(i)}>Delete</Button>
-            <Button onClick={() => handleComplete(i)}>Complete</Button>
-          </DialogActions>
-        </div>
-      </Card>
+    let incompleteList = dAndD.map((task, i) => (
+      <Draggable key={`${task.id}`} draggableId={`${task.id}`} index={i}>
+        {(provided) =>(
+          <Card className={multiClass} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+            <div style={{ backgroundColor: task.values.color, margin: '0rem 1rem 0rem 0rem'}} ></div>
+            <div>
+              <h3>Task: {task.values.taskName}</h3>
+              <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
+              {task.values.active !== false ? <p>Actual Pomodoros: {pomoCount}</p> : <p>Actual Pomodoros: {taskList[i].values.actPomodoros} </p>}
+              <p>Project Name: {task.values.projectName}</p>
+              <p>Notes: {task.values.notes}</p>
+              <DialogActions>
+                {task.values.active === false ? <Button id={"setActiveBtn"+i} onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
+                <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
+                <Button onClick={() => handleDelete(i)}>Delete</Button>
+                <Button onClick={() => handleComplete(i)}>Complete</Button>
+              </DialogActions>
+            </div>
+          </Card>
+        )}
+      </Draggable>
     ))
 
     let completeList = completedTasks.map((task, i) => (
@@ -143,7 +166,16 @@ export default function Tasks({pomoCount}) {
         <div>
         <div>
         <h2>In Progress Tasks:</h2>
-        {incompleteList}
+        <DragDropContext onDragEnd={handleOnDragEnd}>
+          <Droppable droppableId='droppableIncompleteList'>
+            {(provided) =>(
+              <div className='droppableIncompleteList' {...provided.droppableProps} ref={provided.innerRef}>
+                {incompleteList}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
         </div>
         <div>
         <h2>Completed Tasks:</h2>
@@ -224,7 +256,6 @@ export default function Tasks({pomoCount}) {
     setColorOpen(false);
     setLocalStorage()
   };
-
 
   const handleColorEdit = () =>{
     setColorOpen(true)
