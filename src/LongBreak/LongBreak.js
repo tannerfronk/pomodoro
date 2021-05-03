@@ -31,6 +31,11 @@ export default function LongBreak({ longBreakData, save, onFinish, finished }) {
   const classes = useStyles();
 
   const longBreak = longBreakData
+  const audioElement = new Audio("//onlineclock.net/audio/options/default.mp3");
+
+  const playAlarm = () => {
+    audioElement.play();
+  };
 
   return (
     <div key={save}>
@@ -47,6 +52,10 @@ export default function LongBreak({ longBreakData, save, onFinish, finished }) {
             time: 0,
             callback: () => onFinish(),
           },
+          {
+            time: 0.05,
+            callback: () => playAlarm(),
+          }
         ]}
       >
         {({ start, pause, reset }) => (
