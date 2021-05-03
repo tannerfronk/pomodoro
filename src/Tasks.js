@@ -85,10 +85,10 @@ export default function Tasks({pomoCount}) {
     localStorage.setItem('pomoTaskList', JSON.stringify(localStorageItem))
   }
 
-  const sendColorData = (colorChoice, i) =>{
-    setEditId(i)
+  const sendColorData = (colorChoice) =>{
     setColor(colorChoice)
-    taskList[i].values.color = colorChoice.hex
+    editOpen === false ? setColor(colorChoice) : taskList[editId].values.color = colorChoice.hex
+    setLocalStorage()
   }
 
   const handleClickAddOpen = () => {
@@ -157,6 +157,7 @@ export default function Tasks({pomoCount}) {
   const handleAdd = (values) => { //adds id to task and pushes obj to taskList
     let previousId;
     let id = 0;
+    values.color = color.hex
     if(taskList.length === 0){
       previousId = 0;
     } else {
@@ -225,7 +226,7 @@ export default function Tasks({pomoCount}) {
   };
 
 
-  const handleColorEdit = (i) =>{
+  const handleColorEdit = () =>{
     setColorOpen(true)
   }
 
@@ -347,7 +348,7 @@ export default function Tasks({pomoCount}) {
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button onClick={handleColorEdit}>
                   <div className={ classes.swatch }>
-                    <div className={ classes.color } style={{backgroundColor: taskList[editId].values.color}} />
+                    <div className={ classes.color } style={editOpen === false ? {backgroundColor: color.hex} : {backgroundColor: taskList[editId].values.color} } />
                   </div>
                 </Button>
                 <Button type="submit">{editOpen === false ? "Add" : "Edit"}</Button>
