@@ -50,30 +50,6 @@ export default function TheTimer({
   const longBreak = longBreakData * 60 * 1000;
   const audioElement = new Audio("//onlineclock.net/audio/options/default.mp3");
 
-  const handleFinish = () => {
-    setFinished(finished + 1);
-  };
-
-  const handleFinishUpdatePomodoro = () => {
-    setFinished(finished + 1);
-    setPomodoroCount(pomodoroCount + 1);
-    setPomoCount(pomodoroCount + 1)
-  };
-
-  const resetCount = () => {
-    setPomodoroCount(0);
-    setFinished(0);
-    setSessionCount(0);
-  };
-  const finishSession = () => {
-    setSessionCount(sessionCount + 1);
-  };
-
-  const handleRestart = () => {
-    setFinished(0);
-    finishSession();
-  };
-
   const playAlarm = () => {
     audioElement.play();
   };
