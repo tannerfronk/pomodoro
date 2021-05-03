@@ -16,7 +16,9 @@ import AddIcon from "@material-ui/icons/Add";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { makeStyles } from "@material-ui/core/styles";
+import clsx from 'clsx'
 import ColorPickerButton from './colorPicker'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 // import { render } from "@testing-library/react";
 
 const useStyles = makeStyles({
@@ -37,17 +39,36 @@ const useStyles = makeStyles({
     marginTop: 10,
     marginBottom: 10,
   },
+  cardColorGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 15fr',
+    paddingLeft: '0rem'
+  },
+  swatch: {
+    padding: '5px',
+    background: '#fff',
+    borderRadius: '1px',
+    boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
+    display: 'inline-block',
+    cursor: 'pointer',
+  },
+  color: {
+    width: '36px',
+    height: '14px',
+    borderRadius: '2px',
+  },
 });
 
 let taskList = []; // to store task objects in
 let activeTask = []; // to store currently active task to easily reference
 let completedTasks = [] // to store completed tasks separately
+let localStorageItem
 
-if(Boolean(localStorage.getItem('pomoTaskList')) == true){
+if(Boolean(localStorage.getItem('pomoTaskList')) === true){
   let tempGrab = localStorage.getItem('pomoTaskList') // to store task objects in
   let parseGrab = JSON.parse(tempGrab)
-  taskList = parseGrab.taskList
-  completedTasks = parseGrab.completedTasks
+  taskList = parseGrab.tlLocal
+  completedTasks = parseGrab.ctLocal
 }
 
 export default function Tasks({pomoCount}) {
@@ -57,7 +78,37 @@ export default function Tasks({pomoCount}) {
   const [editId, setEditId] = useState(0)
   const [confirm, setConfirm] = useState(false)
   const [complete, setComplete] = useState(false)
-  const [active, setActive] = useState(false)
+  const [color, setColor] = useState('#fff')
+  const [colorOpen, setColorOpen] = useState(false)
+  const [dAndD, setDAndD] = useState(taskList)
+
+  const setLocalStorage = () =>{
+    localStorageItem = {tlLocal: taskList, ctLocal: completedTasks}
+    localStorage.setItem('pomoTaskList', JSON.stringify(localStorageItem))
+  }
+
+  const sendColorData = (colorChoice) =>{
+    setColor(colorChoice)
+    editOpen === false ? setColor(colorChoice) : taskList[editId].values.color = colorChoice.hex
+    setLocalStorage()
+  }
+
+  const handleOnDragEnd = (result) =>{
+    console.log(result)
+    if (!result.destination) {
+      return;
+    }
+
+    if (result.destination.index === result.source.index) {
+      return;
+    }
+
+    const dragItems = Array.from(dAndD);
+    console.log(dragItems)
+    const [reorderedItem] = dragItems.splice(result.source.index, 1);
+    dragItems.splice(result.destination.index, 0, reorderedItem);
+    setDAndD(dragItems);
+  }
 
   const handleClickAddOpen = () => {
     setAddOpen(true);
@@ -71,23 +122,31 @@ export default function Tasks({pomoCount}) {
   function RenderTasks(){ //create tasks in cards
 
     const classes = useStyles();
-  
-    let incompleteList = taskList.map((task, i) => (
-      <Card key={i} className={classes.cards}>
-        <h3>Task: {task.values.taskName}</h3>
-        <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
-        <p>Actual Pomodoros: {pomoCount}</p>
-        <p>Project Name: {task.values.projectName}</p>
-        <p>Notes: {task.values.notes}</p>
-        <DialogActions>
-          {taskList[i].values.active === false ? <Button id={"setActiveBtn"+i} onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
-          <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
-          <Button onClick={() => handleDelete(i)}>Delete</Button>
-          <Button onClick={() => handleComplete(i)}>Complete</Button>
-        </DialogActions>
-      </Card>
+    const multiClass = clsx(classes.cards, classes.cardColorGrid)
+
+    let incompleteList = dAndD.map((task, i) => (
+      <Draggable key={`${task.id}`} draggableId={`${task.id}`} index={i}>
+        {(provided) =>(
+          <Card className={multiClass} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+            <div style={{ backgroundColor: task.values.color, margin: '0rem 1rem 0rem 0rem'}} ></div>
+            <div>
+              <h3>Task: {task.values.taskName}</h3>
+              <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
+              {task.values.active !== false ? <p>Actual Pomodoros: {pomoCount}</p> : <p>Actual Pomodoros: {taskList[i].values.actPomodoros} </p>}
+              <p>Project Name: {task.values.projectName}</p>
+              <p>Notes: {task.values.notes}</p>
+              <DialogActions>
+                {task.values.active === false ? <Button id={"setActiveBtn"+i} onClick={() => handleSetActive(i)}>Set Active</Button> : ""}
+                <Button onClick={() => handleClickEditOpen(i)}>Edit</Button>
+                <Button onClick={() => handleDelete(i)}>Delete</Button>
+                <Button onClick={() => handleComplete(i)}>Complete</Button>
+              </DialogActions>
+            </div>
+          </Card>
+        )}
+      </Draggable>
     ))
-    
+
     let completeList = completedTasks.map((task, i) => (
       <Card key={i} className={classes.cards}>
         <h3>Task: {task.values.taskName}</h3>
@@ -97,7 +156,7 @@ export default function Tasks({pomoCount}) {
         <p>Notes: {task.values.notes}</p>
       </Card>
     ))
-  
+
     if(taskList <= 0 && completedTasks <= 0) {
       return(
         <h3>No Tasks available, add one!</h3>
@@ -107,7 +166,16 @@ export default function Tasks({pomoCount}) {
         <div>
         <div>
         <h2>In Progress Tasks:</h2>
-        {incompleteList}
+        <DragDropContext onDragEnd={handleOnDragEnd}>
+          <Droppable droppableId='droppableIncompleteList'>
+            {(provided) =>(
+              <div className='droppableIncompleteList' {...provided.droppableProps} ref={provided.innerRef}>
+                {incompleteList}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
         </div>
         <div>
         <h2>Completed Tasks:</h2>
@@ -121,6 +189,7 @@ export default function Tasks({pomoCount}) {
   const handleAdd = (values) => { //adds id to task and pushes obj to taskList
     let previousId;
     let id = 0;
+    values.color = color.hex
     if(taskList.length === 0){
       previousId = 0;
     } else {
@@ -128,21 +197,21 @@ export default function Tasks({pomoCount}) {
       id = previousId + 1;
     }
     taskList.push({id, values})
+    setLocalStorage()
   }
 
   const handleSetActive = (i) => {
     activeTask = [taskList[i]];
-    setActive(true) // this state doesn't really do anything but could be used if needed
     resetActive(i).then(
         taskList[i].values.active = true
     )
-    setActive(false)
-    if(taskList.length === 1){ //fixes instances where rerender doesn't happen with only 1 task when setting active
-      let activeBtn = document.getElementById("setActiveBtn" + i)
-      activeBtn.style.display = "none"
-    }
+    let activeBtn = document.getElementById("setActiveBtn" + i)//makes current active task setActiveBtn disappear
+    activeBtn.style.display = "none"
+    activeTask = [taskList[i]];
     setEditId(i)//setting EditId to keep things consistent with other functions
+    setLocalStorage()
   }
+
   async function resetActive(i) {
     await taskList.forEach(task => task.values.active = false)
   }
@@ -157,17 +226,20 @@ export default function Tasks({pomoCount}) {
   const handleComplete = (i) => {//grabs id for current task
     setEditId(i)
     setComplete(true)
+    setLocalStorage()
   }
   const completeTask = () => {//will mark task as complete
-    let actPomodoros = document.getElementById('actPomodoros').value // replace this with var passed from Timer.js
+    let actPomodoros = pomoCount // replace this with var passed from Timer.js
     taskList[editId].values.actPomodoros = actPomodoros
     taskList[editId].values.complete = true
     setComplete(false)
     completedTasks.push(taskList[editId])
     taskList.splice(editId, 1)
+    setLocalStorage()
   }
   const confirmDelete = () => {
     taskList.splice(editId, 1)
+    setLocalStorage()
     setConfirm(false)
   }
 
@@ -176,8 +248,19 @@ export default function Tasks({pomoCount}) {
     setEditOpen(false);
     setConfirm(false);
     setComplete(false);
+    setColorOpen(false);
+    setLocalStorage()
   };
-  
+
+  const handleCloseColor = () => { //closes edit or add task dialogs;
+    setColorOpen(false);
+    setLocalStorage()
+  };
+
+  const handleColorEdit = () =>{
+    setColorOpen(true)
+  }
+
   return (
     <div>
       <div className={classes.taskHeader}>
@@ -195,8 +278,8 @@ export default function Tasks({pomoCount}) {
             projectName: "New Project",
             notes: "Notes...",
             complete: false,
-            actPomodoros: "",
-            color: '#bbdefe',
+            actPomodoros: 0,
+            color: '#fff',
             active: false,
           }}
           validationSchema={Yup.object().shape({
@@ -294,12 +377,19 @@ export default function Tasks({pomoCount}) {
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
-                <Button><ColorPickerButton></ColorPickerButton></Button>
+                <Button onClick={handleColorEdit}>
+                  <div className={ classes.swatch }>
+                    <div className={ classes.color } style={editOpen === false ? {backgroundColor: color.hex} : {backgroundColor: taskList[editId].values.color} } />
+                  </div>
+                </Button>
                 <Button type="submit">{editOpen === false ? "Add" : "Edit"}</Button>
               </DialogActions>
             </form>
           )}
         </Formik>
+      </Dialog>
+      <Dialog open={colorOpen} onClose={handleCloseColor}>
+        <ColorPickerButton editId={editId} sendColorData={sendColorData} />
       </Dialog>
       <div className={classes.cardsContainer}>
       <RenderTasks />

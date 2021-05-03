@@ -36,6 +36,11 @@ export default function ShortBreak({
   const classes = useStyles();
 
   const shortBreak = shortBreakData;
+  const audioElement = new Audio("//onlineclock.net/audio/options/default.mp3");
+
+  const playAlarm = () => {
+    audioElement.play();
+  };
 
   return (
     <div key={save}>
@@ -52,6 +57,10 @@ export default function ShortBreak({
             time: 0,
             callback: () => onFinish(),
           },
+          {
+            time: 0.05,
+            callback: () => playAlarm(),
+          }
         ]}
       >
         {({ start, pause, reset }) => (
