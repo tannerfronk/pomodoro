@@ -114,7 +114,7 @@ export default function Tasks({pomoCount}) {
             <div>
               <h3>Task: {task.values.taskName}</h3>
               <p>Estimated Pomodoros: {task.values.estPomodoros}</p>
-              {task.values.active !== false ? <p>Actual Pomodoros: {pomoCount}</p> : <p>Actual Pomodoros: {taskList[i].values.actPomodoros} </p>}
+              {task.values.active !== false ? <p>Actual Pomodoros: {pomoCount}</p> : <p>Actual Pomodoros: {task.values.actPomodoros} </p>}
               <p>Project Name: {task.values.projectName}</p>
               <p>Notes: {task.values.notes}</p>
               <DialogActions>
